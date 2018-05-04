@@ -1,0 +1,8 @@
+tfoot td {
+    margin: 20px 0 0 0 !important;
+    border-top: 3px solid #333 !important;
+    text-align: right !important;
+    height: 62px;
+    font-size: 24px;
+    font-weight: 700;
+}

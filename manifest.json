@@ -1,0 +1,28 @@
+{
+  "name": "Medium Enhanced Stats",
+  "version": "1.0",
+  "description": "Enhancements for your Medium stats page! Get insight into total view count with new table summary row...",
+  "manifest_version": 2,
+  "author": "Tomas Trajan <@tomastrajan>",
+  "permissions": [
+    "activeTab", "declarativeContent"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.medium.com/*/stats"],
+      "run_at": "document_idle",
+      "css": ["stats-total.css"],
+      "js": ["stats-total.js"]
+    }
+  ],
+  "icons": {
+    "128": "images/icon-128.png"
+  },
+  "page_action": {
+    "default_title": "Medium Enhanced Stats"
+  }
+}
