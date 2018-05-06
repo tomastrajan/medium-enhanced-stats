@@ -1,11 +1,26 @@
-const table = document.querySelector('table');
-const tbody = document.querySelector('table tbody');
+const intervalId = setInterval(() => {
+  const tfoot = document.querySelector('table tfoot');
+  if (!tfoot) {
+    init();
+  }
+}, 1000);
 
-const observer = new MutationObserver(updateTableTotals);
-observer.observe(tbody, { childList: true });
-updateTableTotals();
+window.addEventListener('unload', () => clearInterval(intervalId));
+
+init();
+
+function init() {
+  console.log('Medium Enhanced Stats - Init');
+  const tbody = document.querySelector('table tbody');
+  if (tbody) {
+    const observer = new MutationObserver(updateTableTotals);
+    observer.observe(tbody, { childList: true });
+    updateTableTotals();
+  }
+}
 
 function updateTableTotals() {
+  const table = document.querySelector('table');
   const totals = getTotals();
   const { views, reads, fans, ratio } = totals;
   chrome.runtime.sendMessage(totals);
