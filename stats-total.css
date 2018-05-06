@@ -6,3 +6,21 @@ tfoot td {
     font-size: 24px;
     font-weight: 700;
 }
+
+@media screen and (max-width: 991px) {
+    tfoot td:first-child {
+        display: none;
+    }
+
+    tfoot td {
+        text-align: left !important;
+        padding: 30px 0 0 0 !important;
+    }
+}
+
+@media screen and (max-width: 500px) {
+    tfoot td {
+        font-size: 15px;
+        font-weight: 700;
+    }
+}
