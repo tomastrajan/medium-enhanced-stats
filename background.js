@@ -19,7 +19,7 @@ chrome.runtime.onInstalled.addListener(() => {
 chrome.runtime.onMessage.addListener(request => {
   const { views, reads, fans, ratio } = request;
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-    const tabId = tabs[0].id;
+    const tabId = tabs && tabs[0] && tabs[0].id;
     if (tabId) {
       chrome.pageAction.setTitle({
         tabId,
