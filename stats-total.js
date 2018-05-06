@@ -22,7 +22,7 @@ function init() {
 function updateTableTotals() {
   const table = document.querySelector('table');
   const totals = getTotals();
-  const { views, reads, fans, ratio } = totals;
+  const { views, additionalViews, reads, fans, ratio } = totals;
   chrome.runtime.sendMessage(totals);
   let tfoot = table.querySelector('tfoot');
   if (!tfoot) {
@@ -32,7 +32,10 @@ function updateTableTotals() {
   tfoot.innerHTML = `
       <tr>
         <td></td>
-        <td title="${formatTitle(views)}">${formatValue(views)}</td>
+        <td title="${formatTitle(views)}">
+          ${formatValue(views)}
+          ${additionalViews ? `<span>+${formatValue(additionalViews)}</span>` : ''}
+        </td>
         <td title="${formatTitle(reads)}">${formatValue(reads)}</td>
         <td title="Weighted average">${parseFloat(ratio.toFixed(2)).toString()}%</td>
         <td title="${formatTitle(fans)}">${formatValue(fans)}</td>
@@ -44,6 +47,7 @@ function getTotals() {
   const rows = document.querySelectorAll('table tbody tr');
   const totals = {
     views: 0,
+    additionalViews: 0,
     reads: 0,
     fans: 0,
     ratio: 0
@@ -51,6 +55,7 @@ function getTotals() {
   for (let row of rows) {
     if (row.childNodes.length > 1) {
       const views = getValueAsInt(row.childNodes[1]);
+      const additionalViews = getAdditionalViews(row.childNodes[1]);
       const reads = getValueAsInt(row.childNodes[2]);
       const ratio = getValueAsFloat(row.childNodes[3]);
       const fans = getValueAsInt(row.childNodes[4]);
@@ -58,6 +63,7 @@ function getTotals() {
       const pRatio = totals.ratio;
 
       totals.views += views;
+      totals.additionalViews += additionalViews;
       totals.reads += reads;
       totals.fans += fans;
       totals.ratio = totals.ratio === 0
@@ -75,9 +81,18 @@ function getValueAsInt(node) {
   const value = node.childNodes[0].textContent.replace(',', '');
   return parseInt(value, 10);
 }
+
 function getValueAsFloat(node) {
   const value = node.childNodes[0].textContent;
   return parseFloatToPrecision(value, 3);
+}
+
+function getAdditionalViews(node) {
+  let value ;
+  try {
+    value = node.childNodes[1].childNodes[1].textContent.replace(/views|,/gmi, '');
+  } catch {}
+  return value ? parseInt(value, 10) : 0;
 }
 
 function parseFloatToPrecision(value, precission) {

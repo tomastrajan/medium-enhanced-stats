@@ -7,6 +7,12 @@ tfoot td {
     font-weight: 700;
 }
 
+tfoot td span {
+    font-size: 70%;
+    color: rgba(0,0,0,.54);
+    font-weight: normal;
+}
+
 @media screen and (max-width: 991px) {
     tfoot td:first-child {
         display: none;
