@@ -1,7 +1,7 @@
 {
   "name": "Medium Enhanced Stats",
   "version": "2.0",
-  "description": "Enhancements for your Medium stats page! Get insight into total view count with new table summary row...",
+  "description": "Get overview about your total Medium stats for articles and responses!",
   "manifest_version": 2,
   "author": "Tomas Trajan <@tomastrajan>",
   "permissions": [
