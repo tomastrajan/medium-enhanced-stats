@@ -2,6 +2,7 @@
 <html>
     <head>
         <link rel="stylesheet" href="popup.css">
+        <script defer src="fontawesome-all.min.js"></script>
     </head>
     <body>
         <section>
@@ -9,16 +10,39 @@
                 <img src="logo.png" alt="Medium Enhanced Stats">
                 Medium <span>Enhanced Stats</span>
             </h1>
-            <button class="open-stats">Open stats</button>
+            <div class="actions">
+                <button class="open-stats">
+                    <i class="fas fa-external-link-alt"></i> Open stats
+                </button>
+                <button class="outline refresh-stats">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            <div class="loading">
+                <i class="fas fa-3x fa-spinner fa-pulse"></i>
+            </div>
             <table>
                 <tr>
-                    <th>Articles</th>
+                    <th>Type</th>
+                    <th>Count</th>
                     <th>Views</th>
                     <th>Reads</th>
                     <th title="Weighted average">Ratio</th>
                     <th>Fans</th>
+                    <th>Claps</th>
                 </tr>
-                <tr>
+                <tr class="articles">
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="responses">
+                    <td></td>
+                    <td></td>
                     <td></td>
                     <td></td>
                     <td></td>

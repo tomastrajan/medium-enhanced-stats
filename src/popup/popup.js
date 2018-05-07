@@ -1,43 +1,43 @@
+const $loading = document.querySelector('.loading');
 const $table = document.querySelector('table');
-const $tableStatsCells = document.querySelectorAll('table tr:last-child td');
 const $year = document.querySelector('.year');
-const $openStatsButton = document.querySelector('.open-stats');
+const $buttonOpenStats = document.querySelector('.open-stats');
+const $buttonRefreshStats = document.querySelector('.refresh-stats');
 
-$openStatsButton.addEventListener('click', () => {
-  const url = 'https://medium.com/me/stats';
-  chrome.tabs.create({ url });
-});
-
+init();
+$buttonRefreshStats.addEventListener('click', () => init());
+$buttonOpenStats.addEventListener('click', () => openStatsPage());
 $year.textContent = (new Date()).getFullYear();
 
-chrome.tabs.getSelected(null, tab => {
-  if (tab && tab.url && isMediumStatsUrl(tab.url)) {
-    chrome.tabs.sendMessage(tab.id, { type: "GET_TOTALS" });
-  }
-});
+function init() {
+  $loading.style.display = 'block';
+  $table.style.display = 'none';
+  chrome.runtime.sendMessage({ type: 'GET_TOTALS'}, {}, data => {
+    updateStatsTable('articles', data.articles);
+    updateStatsTable('responses', data.responses)
+  });
+}
 
-chrome.runtime.onMessage.addListener(request => {
-  if (request.type === 'TOTALS' && request.totals) {
-    updateStatsTable(request.totals)
-  }
-});
-
-function updateStatsTable(totals) {
-  const { articles, views, reads, fans, ratio } = totals;
+function updateStatsTable(type,totals) {
+  const { items, views, reads, fans, claps, ratio } = totals;
+  const $cols = $table.querySelectorAll(`.${type} td`);
+  $cols[0].textContent = `${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
+  $cols[1].textContent = formatValue(items);
+  $cols[2].textContent = formatValue(views);
+  $cols[3].textContent = formatValue(reads);
+  $cols[4].textContent = ratio + '%';
+  $cols[5].textContent = formatValue(fans);
+  $cols[6].textContent = formatValue(claps);
+  $loading.style.display = 'none';
   $table.style.display = 'table';
-  $tableStatsCells[0].textContent = formatValue(articles);
-  $tableStatsCells[1].textContent = formatValue(views);
-  $tableStatsCells[2].textContent = formatValue(reads);
-  $tableStatsCells[3].textContent = formatValue(ratio, 2) + '%';
-  $tableStatsCells[4].textContent = formatValue(fans);
 }
 
-function isMediumStatsUrl(url) {
-  return /medium\.com\/(.*)?\/stats/ig.test(url);
-}
-
-function formatValue(number, precision = 0) {
+function formatValue(number) {
   return number > 1000
     ? (number / 1000).toFixed(1) + 'K'
-    : number.toFixed(precision);
+    : number.toFixed(0);
+}
+
+function openStatsPage() {
+  chrome.tabs.create({ url: 'https://medium.com/me/stats' });
 }

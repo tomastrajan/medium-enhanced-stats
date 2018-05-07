@@ -4,32 +4,23 @@ const intervalId = setInterval(() => {
     init();
   }
 }, 1000);
-
 window.addEventListener('unload', () => clearInterval(intervalId));
 
-init();
-
-chrome.runtime.onMessage.addListener(request => {
-  if (request.type === 'GET_TOTALS') {
-    chrome.runtime.sendMessage({ type: 'TOTALS', totals: getTotals() });
-  }
-});
 
 function init() {
-  console.log('Medium Enhanced Stats - Init');
-  const tbody = document.querySelector('table tbody');
-  if (tbody) {
-    const observer = new MutationObserver(updateTableTotals);
-    observer.observe(tbody, { childList: true });
-    updateTableTotals();
-  }
+  chrome.runtime.sendMessage({ type: 'GET_TOTALS'}, {}, data => {
+    if (window.location.pathname.includes('responses')) {
+      updateTable(data.responses);
+    } else {
+      updateTable(data.articles);
+    }
+  });
 }
 
-function updateTableTotals() {
+function updateTable(totals) {
   const table = document.querySelector('table');
-  const totals = getTotals();
-  const { articles, views, additionalViews, reads, fans, ratio } = totals;
-  chrome.runtime.sendMessage({ type: 'TOTALS', totals });
+  const { items, views, syndicatedViews, reads, fans, ratio } = totals;
+  console.log(totals);
   let tfoot = table.querySelector('tfoot');
   if (!tfoot) {
     tfoot = document.createElement('tfoot');
@@ -37,74 +28,16 @@ function updateTableTotals() {
   }
   tfoot.innerHTML = `
       <tr>
-        <td title="Articles count" class="articles-count"># ${formatValue(articles)}</td>
+        <td title="Items count" class="articles-count">${formatValue(items)}</td>
         <td title="${formatTitle(views)}">
           ${formatValue(views)}
-          ${additionalViews ? `<span>+${formatValue(additionalViews)}</span>` : ''}
+          ${syndicatedViews ? `<span>+${formatValue(syndicatedViews)}</span>` : ''}
         </td>
         <td title="${formatTitle(reads)}">${formatValue(reads)}</td>
-        <td title="Weighted average">${parseFloat(ratio.toFixed(2)).toString()}%</td>
+        <td title="Weighted average">${ratio}%</td>
         <td title="${formatTitle(fans)}">${formatValue(fans)}</td>
       </tr>
     `;
-}
-
-function getTotals() {
-  const rows = document.querySelectorAll('table tbody tr');
-  const totals = {
-    articles: 0,
-    views: 0,
-    additionalViews: 0,
-    reads: 0,
-    fans: 0,
-    ratio: 0
-  };
-  for (let row of rows) {
-    if (row.childNodes.length > 1) {
-      const views = getValueAsInt(row.childNodes[1]);
-      const additionalViews = getAdditionalViews(row.childNodes[1]);
-      const reads = getValueAsInt(row.childNodes[2]);
-      const ratio = getValueAsFloat(row.childNodes[3]);
-      const fans = getValueAsInt(row.childNodes[4]);
-      const pViews = totals.views;
-      const pRatio = totals.ratio;
-
-      totals.articles += 1;
-      totals.views += views;
-      totals.additionalViews += additionalViews;
-      totals.reads += reads;
-      totals.fans += fans;
-      totals.ratio = totals.ratio === 0
-        ? ratio
-        : parseFloatToPrecision(
-          ((pViews * pRatio) + (views * ratio)) / (pViews + views),
-          3
-        );
-    }
-  }
-  return totals;
-}
-
-function getValueAsInt(node) {
-  const value = node.childNodes[0].textContent.replace(',', '');
-  return parseInt(value, 10);
-}
-
-function getValueAsFloat(node) {
-  const value = node.childNodes[0].textContent;
-  return parseFloatToPrecision(value, 3);
-}
-
-function getAdditionalViews(node) {
-  let value ;
-  try {
-    value = node.childNodes[1].childNodes[1].textContent.replace(/views|,/gmi, '');
-  } catch {}
-  return value ? parseInt(value, 10) : 0;
-}
-
-function parseFloatToPrecision(value, precission) {
-  return parseFloat(parseFloat(value).toFixed(precission));
 }
 
 function formatValue(number) {
