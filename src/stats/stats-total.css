@@ -13,6 +13,10 @@ tfoot td span {
     font-weight: normal;
 }
 
+tfoot td.articles-count {
+    text-align: left !important;
+}
+
 @media screen and (max-width: 991px) {
     tfoot td:first-child {
         display: none;

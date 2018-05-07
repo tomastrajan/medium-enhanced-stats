@@ -28,7 +28,7 @@ function init() {
 function updateTableTotals() {
   const table = document.querySelector('table');
   const totals = getTotals();
-  const { views, additionalViews, reads, fans, ratio } = totals;
+  const { articles, views, additionalViews, reads, fans, ratio } = totals;
   chrome.runtime.sendMessage({ type: 'TOTALS', totals });
   let tfoot = table.querySelector('tfoot');
   if (!tfoot) {
@@ -37,7 +37,7 @@ function updateTableTotals() {
   }
   tfoot.innerHTML = `
       <tr>
-        <td></td>
+        <td title="Articles count" class="articles-count"># ${formatValue(articles)}</td>
         <td title="${formatTitle(views)}">
           ${formatValue(views)}
           ${additionalViews ? `<span>+${formatValue(additionalViews)}</span>` : ''}
@@ -52,6 +52,7 @@ function updateTableTotals() {
 function getTotals() {
   const rows = document.querySelectorAll('table tbody tr');
   const totals = {
+    articles: 0,
     views: 0,
     additionalViews: 0,
     reads: 0,
@@ -68,6 +69,7 @@ function getTotals() {
       const pViews = totals.views;
       const pRatio = totals.ratio;
 
+      totals.articles += 1;
       totals.views += views;
       totals.additionalViews += additionalViews;
       totals.reads += reads;

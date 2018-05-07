@@ -23,20 +23,21 @@ chrome.runtime.onMessage.addListener(request => {
 });
 
 function updateStatsTable(totals) {
-  const { views, reads, fans, ratio } = totals;
+  const { articles, views, reads, fans, ratio } = totals;
   $table.style.display = 'table';
-  $tableStatsCells[0].textContent = formatValue(views);
-  $tableStatsCells[1].textContent = formatValue(reads);
-  $tableStatsCells[2].textContent = formatValue(ratio) + '%';
-  $tableStatsCells[3].textContent = formatValue(fans);
+  $tableStatsCells[0].textContent = formatValue(articles);
+  $tableStatsCells[1].textContent = formatValue(views);
+  $tableStatsCells[2].textContent = formatValue(reads);
+  $tableStatsCells[3].textContent = formatValue(ratio, 2) + '%';
+  $tableStatsCells[4].textContent = formatValue(fans);
 }
 
 function isMediumStatsUrl(url) {
   return /medium\.com\/(.*)?\/stats/ig.test(url);
 }
 
-function formatValue(number) {
+function formatValue(number, precision = 0) {
   return number > 1000
     ? (number / 1000).toFixed(1) + 'K'
-    : number.toFixed(2);
+    : number.toFixed(precision);
 }
