@@ -9,6 +9,12 @@ window.addEventListener('unload', () => clearInterval(intervalId));
 
 init();
 
+chrome.runtime.onMessage.addListener(request => {
+  if (request.type === 'GET_TOTALS') {
+    chrome.runtime.sendMessage({ type: 'TOTALS', totals: getTotals() });
+  }
+});
+
 function init() {
   console.log('Medium Enhanced Stats - Init');
   const tbody = document.querySelector('table tbody');
@@ -23,7 +29,7 @@ function updateTableTotals() {
   const table = document.querySelector('table');
   const totals = getTotals();
   const { views, additionalViews, reads, fans, ratio } = totals;
-  chrome.runtime.sendMessage(totals);
+  chrome.runtime.sendMessage({ type: 'TOTALS', totals });
   let tfoot = table.querySelector('tfoot');
   if (!tfoot) {
     tfoot = document.createElement('tfoot');
