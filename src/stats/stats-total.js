@@ -5,6 +5,7 @@ const intervalId = setInterval(() => {
   }
 }, 1000);
 window.addEventListener('unload', () => clearInterval(intervalId));
+init();
 
 
 function init() {

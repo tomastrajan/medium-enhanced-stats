@@ -87,7 +87,18 @@ button.outline:hover {
     background-color: var(--color-white);
 }
 
-.loading {
+.refresh-stats:hover  > * {
+    transition: transform .5s ease-in-out;
+    transform: rotate(180deg);
+}
+
+.refresh-stats:focus  > * {
+    transition: transform 1s ease-in-out;
+    transform: rotate(1080deg);
+}
+
+.spinner {
+    display: none;
     text-align: center;
     margin: 0 0 20px 0;
     color:  var(--color-grey);
@@ -95,7 +106,6 @@ button.outline:hover {
 
 table {
     width: 100%;
-    display: none;
     margin: 0 0 20px 0;
     border-collapse: collapse;
 }
@@ -124,6 +134,7 @@ footer {
     text-align: center;
     padding: 5px 0 15px 0;
     color:  var(--color-grey);
+    position: relative;
 }
 
 footer a img {
@@ -131,4 +142,18 @@ footer a img {
     position: relative;
     top: 8px;
     left: 5px;
+}
+
+footer .version {
+    position: absolute;
+    right: 20px;
+    top:16px;
+}
+
+.loading .spinner {
+    display: block;
+}
+
+.loading table {
+    display: none;
 }

@@ -1,20 +1,25 @@
-const $loading = document.querySelector('.loading');
+const $body = document.querySelector('body');
 const $table = document.querySelector('table');
 const $year = document.querySelector('.year');
+const $version = document.querySelector('.version');
 const $buttonOpenStats = document.querySelector('.open-stats');
 const $buttonRefreshStats = document.querySelector('.refresh-stats');
 
-init();
-$buttonRefreshStats.addEventListener('click', () => init());
-$buttonOpenStats.addEventListener('click', () => openStatsPage());
 $year.textContent = (new Date()).getFullYear();
+$version.textContent = 'v' + chrome.runtime.getManifest().version;
+$buttonOpenStats.addEventListener('click', () => openStatsPage());
+$buttonRefreshStats.addEventListener('click', () => {
+  init();
+  setTimeout(() => $buttonRefreshStats.blur(), 1000);
+});
+init();
 
 function init() {
-  $loading.style.display = 'block';
-  $table.style.display = 'none';
+  $body.classList.add('loading');
   chrome.runtime.sendMessage({ type: 'GET_TOTALS'}, {}, data => {
     updateStatsTable('articles', data.articles);
-    updateStatsTable('responses', data.responses)
+    updateStatsTable('responses', data.responses);
+    $body.classList.remove('loading');
   });
 }
 
@@ -28,8 +33,6 @@ function updateStatsTable(type,totals) {
   $cols[4].textContent = ratio + '%';
   $cols[5].textContent = formatValue(fans);
   $cols[6].textContent = formatValue(claps);
-  $loading.style.display = 'none';
-  $table.style.display = 'table';
 }
 
 function formatValue(number) {
