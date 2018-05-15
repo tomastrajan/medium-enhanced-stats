@@ -1,6 +1,7 @@
 :root {
+    --color-text: #000;
     --color-white: #fff;
-    --color-border: #eee;
+    --color-grey-lighter: #eee;
     --color-grey: #aaa;
     --color-brand: #03a87c;
     --color-brand-darker: #019b72;
@@ -12,6 +13,7 @@ html {
 }
 
 body {
+    color: var(--color-text);
     width: 400px;
     padding: 0;
     margin: 0;
@@ -23,7 +25,9 @@ section {
 }
 
 h1 {
-    margin: 0 0 20px 0;
+    position: relative;
+    margin: 10px 0 20px 0;
+    padding: 0 0 0 64px;
     font-size: 24px;
     text-align: center;
 }
@@ -34,8 +38,10 @@ h1 span {
 
 h1 img {
     height: 64px;
-    display: block;
-    margin: 0 auto 5px auto;
+    display: inline-block;
+    position: absolute;
+    top: -23px;
+    left: 0;
 }
 
 a {
@@ -49,19 +55,22 @@ a:hover {
 
 .actions {
     display: flex;
+    align-items: center;
     margin: 0 0 20px 0;
 }
 
 .actions .open-stats {
-    flex: 3 1 auto;
+    flex: 1 1 auto;
     margin: 0 10px 0 0;
 }
 
 .actions .refresh-stats {
     flex: 1 1 auto;
+    margin: 0 0 0 10px;
 }
 
 button {
+    height: 36px;
     border: 0;
     padding: 10px;
     color: var(--color-white);
@@ -98,11 +107,87 @@ button.outline:hover {
     transform: rotate(1080deg);
 }
 
-.spinner {
+.chart {
+    flex: 10 1 auto;
+    margin: 10px auto;
+    max-width: 80%;
+    max-height: 150px;
+}
+
+.chart .circle-bg {
+    fill: none;
+    stroke: var(--color-grey-lighter);
+    stroke-width: 2;
+}
+
+.chart .circle {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.chart .progress {
+    stroke: var(--color-brand);
+    animation: chart-progress 1.5s ease-in-out forwards;
+}
+
+.chart .spinner {
     display: none;
-    text-align: center;
-    margin: 0 0 20px 0;
-    color:  var(--color-grey);
+    stroke: var(--color-grey);
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+    transform-origin: center;
+    animation: chart-spinner 3s ease-in-out infinite, chart-spinner-rotate 2.5s linear infinite;
+}
+
+@keyframes chart-spinner-rotate {
+    100% {
+        transform: rotate(360deg);
+
+    }
+}
+
+@keyframes chart-spinner {
+    0% {
+        stroke-dasharray: 1, 200;
+        stroke-dashoffset: 0;
+    }
+    50% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -35px;
+    }
+    100% {
+        stroke-dasharray: 89, 200;
+        stroke-dashoffset: -124px;
+    }
+}
+
+@keyframes chart-progress {
+    0% {
+        stroke-dasharray: 0, 100;
+    }
+}
+
+.chart .label {
+    fill: var(--color-grey);
+    font-family: sans-serif;
+    font-size: 0.18em;
+    text-anchor: middle;
+}
+
+.chart .reach {
+    fill: var(--color-brand);
+    font-family: sans-serif;
+    font-size: 0.5em;
+    font-weight: bold;
+    text-anchor: middle;
+}
+
+.chart .milestone {
+    fill: var(--color-text);
+    font-family: sans-serif;
+    font-size: 0.25em;
+    text-anchor: middle;
 }
 
 table {
@@ -131,7 +216,7 @@ table th {
 }
 
 footer {
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-grey-lighter);
     text-align: center;
     padding: 5px 0 15px 0;
     color:  var(--color-grey);
@@ -151,10 +236,12 @@ footer .version {
     top:16px;
 }
 
-.loading .spinner {
-    display: block;
+.loading table,
+.loading .chart-label,
+.loading .chart .progress {
+    display: none;
 }
 
-.loading table {
-    display: none;
+.loading .chart .spinner {
+    display: block;
 }

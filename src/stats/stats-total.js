@@ -30,23 +30,25 @@ function updateTable(totals) {
   tfoot.innerHTML = `
       <tr>
         <td title="Items count" class="articles-count">${formatValue(items)}</td>
-        <td title="${formatTitle(views)}">
+        <td title="${formatWholeNumber(views)}">
           ${formatValue(views)}
           ${syndicatedViews ? `<span>+${formatValue(syndicatedViews)}</span>` : ''}
         </td>
-        <td title="${formatTitle(reads)}">${formatValue(reads)}</td>
+        <td title="${formatWholeNumber(reads)}">${formatValue(reads)}</td>
         <td title="Weighted average">${ratio}%</td>
-        <td title="${formatTitle(fans)}">${formatValue(fans)}</td>
+        <td title="${formatWholeNumber(fans)}">${formatValue(fans)}</td>
       </tr>
     `;
 }
 
 function formatValue(number) {
-  return number > 1000
-    ? (number / 1000).toFixed(1) + 'K'
-    : number;
+  return number >= 1000000
+    ? (number / 1000000).toFixed(1) + 'M'
+    :  number >= 1000
+      ? (number / 1000).toFixed(1) + 'K'
+      : number.toFixed(0);
 }
 
-function formatTitle(number) {
+function formatWholeNumber(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }

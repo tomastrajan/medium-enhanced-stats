@@ -2,6 +2,9 @@ const $body = document.querySelector('body');
 const $table = document.querySelector('table');
 const $year = document.querySelector('.year');
 const $version = document.querySelector('.version');
+const $chartProgress = document.querySelector('.chart .progress');
+const $chartReach = document.querySelector('.chart .reach');
+const $chartMilestone = document.querySelector('.chart .milestone');
 const $buttonOpenStats = document.querySelector('.open-stats');
 const $buttonRefreshStats = document.querySelector('.refresh-stats');
 
@@ -16,9 +19,11 @@ init();
 
 function init() {
   $body.classList.add('loading');
+  $chartProgress.setAttribute('stroke-dasharray', `0 100`);
   chrome.runtime.sendMessage({ type: 'GET_TOTALS'}, {}, data => {
     updateStatsTable('articles', data.articles);
     updateStatsTable('responses', data.responses);
+    updateChart(data);
     $body.classList.remove('loading');
   });
 }
@@ -35,12 +40,31 @@ function updateStatsTable(type,totals) {
   $cols[6].textContent = formatValue(claps);
 }
 
-function formatValue(number) {
-  return number > 1000
-    ? (number / 1000).toFixed(1) + 'K'
-    : number.toFixed(0);
+function updateChart(data) {
+  const { articles, responses } = data;
+  const reach = articles.views + responses.views;
+  const milestone = '1'.padEnd(reach.toString().length + 1, '0');
+  const progress = ((reach / milestone) * 100).toFixed(0);
+  $chartProgress.setAttribute('stroke-dasharray', `${progress} 100`);
+  $chartReach.textContent = formatValue(reach);
+  $chartMilestone.textContent = formatWholeNumber(milestone);
 }
+
+function formatValue(number) {
+  return number >= 1000000
+    ? (number / 1000000).toFixed(1) + 'M'
+    :  number >= 1000
+        ? (number / 1000).toFixed(1) + 'K'
+        : number.toFixed(0);
+}
+
+function formatWholeNumber(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 
 function openStatsPage() {
   chrome.tabs.create({ url: 'https://medium.com/me/stats' });
 }
+
+// 100 1000 10000 100000 1000000 10000000
