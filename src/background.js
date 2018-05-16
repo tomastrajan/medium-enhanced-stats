@@ -22,8 +22,9 @@ function getStats(type) {
 }
 
 function calculateTotals(data) {
+  const { value: posts, references: userInfo } = data.payload;
   const totals = { items: 0, views: 0, syndicatedViews: 0, reads: 0, fans: 0, claps: 0 };
-  data.payload.value.forEach(article => {
+  posts.forEach(article => {
     totals.items++;
     totals.views += article.views;
     totals.syndicatedViews += article.syndicatedViews;
@@ -32,5 +33,7 @@ function calculateTotals(data) {
     totals.claps += article.claps;
   });
   totals.ratio = ((totals.reads / totals.views) * 100).toFixed(2);
+  totals.posts = posts;
+  totals.user = userInfo.User[Object.keys(userInfo.User)[0]];
   return totals;
 }

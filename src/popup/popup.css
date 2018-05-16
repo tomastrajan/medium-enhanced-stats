@@ -1,5 +1,5 @@
 :root {
-    --color-text: #000;
+    --color-black: #000;
     --color-white: #fff;
     --color-grey-lighter: #eee;
     --color-grey: #aaa;
@@ -13,7 +13,7 @@ html {
 }
 
 body {
-    color: var(--color-text);
+    color: var(--color-black);
     width: 400px;
     padding: 0;
     margin: 0;
@@ -26,22 +26,36 @@ section {
 
 h1 {
     position: relative;
-    margin: 10px 0 20px 0;
-    padding: 0 0 0 64px;
-    font-size: 24px;
-    text-align: center;
-}
-
-h1 span {
+    margin: -15px 0 20px 0;
+    font-size: 16px;
     color: var(--color-brand);
 }
 
+h1 span {
+    color: var(--color-grey);
+}
+
+h1 .welcome {
+    float: right;
+    font-weight: normal;
+    font-size: 14px;
+}
+
+h1 .welcome .user {
+    color: var(--color-black);
+}
+
+h1 .welcome .user-avatar {
+    border-radius: 50%;
+    height: 32px;
+    top: 11px;
+}
+
 h1 img {
-    height: 64px;
+    height: 32px;
     display: inline-block;
-    position: absolute;
-    top: -23px;
-    left: 0;
+    position: relative;
+    top: 7px;
 }
 
 a {
@@ -108,7 +122,7 @@ button.outline:hover {
 }
 
 .chart {
-    flex: 10 1 auto;
+    flex: 15 1 auto;
     margin: 10px auto;
     max-width: 80%;
     max-height: 150px;
@@ -134,31 +148,33 @@ button.outline:hover {
 .chart .spinner {
     display: none;
     stroke: var(--color-grey);
-    stroke-dasharray: 1, 200;
+    stroke-dasharray: 10, 100;
     stroke-dashoffset: 0;
     transform-origin: center;
-    animation: chart-spinner 3s ease-in-out infinite, chart-spinner-rotate 2.5s linear infinite;
+    animation:
+            chart-spinner 3s ease-in-out infinite,
+            chart-spinner-rotate 3s linear infinite;
 }
 
 @keyframes chart-spinner-rotate {
     100% {
-        transform: rotate(360deg);
+        transform: rotate(396deg);
 
     }
 }
 
 @keyframes chart-spinner {
     0% {
-        stroke-dasharray: 1, 200;
+        stroke-dasharray: 10, 100;
         stroke-dashoffset: 0;
     }
     50% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -35px;
+        stroke-dasharray: 70, 100;
+        stroke-dashoffset: -20;
     }
     100% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -124px;
+        stroke-dasharray: 10, 100;
+        stroke-dashoffset: -90;
     }
 }
 
@@ -184,7 +200,7 @@ button.outline:hover {
 }
 
 .chart .milestone {
-    fill: var(--color-text);
+    fill: var(--color-black);
     font-family: sans-serif;
     font-size: 0.25em;
     text-anchor: middle;
@@ -238,7 +254,8 @@ footer .version {
 
 .loading table,
 .loading .chart-label,
-.loading .chart .progress {
+.loading .chart .progress,
+.loading .welcome {
     display: none;
 }
 

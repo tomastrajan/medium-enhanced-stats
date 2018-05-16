@@ -2,6 +2,8 @@ const $body = document.querySelector('body');
 const $table = document.querySelector('table');
 const $year = document.querySelector('.year');
 const $version = document.querySelector('.version');
+const $user = document.querySelector('.user');
+const $userAvatar = document.querySelector('.user-avatar');
 const $chartProgress = document.querySelector('.chart .progress');
 const $chartReach = document.querySelector('.chart .reach');
 const $chartMilestone = document.querySelector('.chart .milestone');
@@ -24,6 +26,7 @@ function init() {
     updateStatsTable('articles', data.articles);
     updateStatsTable('responses', data.responses);
     updateChart(data);
+    updateUser(data);
     $body.classList.remove('loading');
   });
 }
@@ -48,6 +51,12 @@ function updateChart(data) {
   $chartProgress.setAttribute('stroke-dasharray', `${progress} 100`);
   $chartReach.textContent = formatValue(reach);
   $chartMilestone.textContent = formatWholeNumber(milestone);
+}
+
+function updateUser(data) {
+  const { user } = data.articles;
+  $user.textContent = user.name;
+  $userAvatar.src = 'https://cdn-images-1.medium.com/fit/c/64/64/' + user.imageId;
 }
 
 function formatValue(number) {

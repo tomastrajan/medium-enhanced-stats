@@ -1,3 +1,12 @@
+table .claps {
+    display: inline-block;
+    width: 45%;
+    font-size: 70%;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.54);
+    padding: 5px 0 0 0;
+}
+
 tfoot td {
     margin: 20px 0 0 0 !important;
     border-top: 3px solid #333 !important;
@@ -20,6 +29,13 @@ tfoot td.articles-count {
 }
 
 @media screen and (max-width: 991px) {
+    tbody .claps {
+        position: relative;
+        top: -24px;
+        text-align: right;
+        font-size: 100%;
+    }
+
     tfoot td:first-child {
         display: none;
     }
@@ -31,6 +47,9 @@ tfoot td.articles-count {
 }
 
 @media screen and (max-width: 500px) {
+    tbody .claps {
+        display: none;
+    }
     tfoot td {
         font-size: 15px;
         font-weight: 700;
