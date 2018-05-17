@@ -45,6 +45,7 @@ timer(0, 1000)
     exhaustMap(() => from(loadData()))
   )
   .subscribe(data => {
+    idsOffest = 0;
     document.querySelector('.chartPage button:first-child').addEventListener('click', () => idsOffest++);
     document.querySelector('.chartPage button:last-child').addEventListener('click', () => {
       idsOffest--;
