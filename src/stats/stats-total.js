@@ -1,20 +1,18 @@
 log('start');
 
-const { from, fromEvent, combineLatest, timer, Subject, BehaviorSubject } = rxjs;
-const { tap, map, flatMap, exhaustMap, filter, debounceTime } = rxjs.operators;
+const { from, fromEvent, merge, combineLatest, timer, BehaviorSubject } = rxjs;
+const { tap, map, mapTo, exhaustMap, filter, debounceTime } = rxjs.operators;
 
-const IDS = generateDateIds();
-let idsOffest = 0;
+const BAR_CHART_DATE_IDS = generateDateIds();
+let barChartIdsOffest = 0;
 let barChartExtrasDOM;
+let barChartActionsSubscription;
 
 const stateSubject = new BehaviorSubject(undefined);
 const state$ = stateSubject.asObservable().pipe(
   filter(s => !!s),
   map(s => urlIncludes('responses') ? s.responses : s.articles)
 );
-const barChartChangeSubject = new Subject();
-const barChartChange$ = barChartChangeSubject.asObservable();
-const barChartMutationObserver = new MutationObserver(() => barChartChangeSubject.next());
 
 state$.subscribe(s => {
   log('new state');
@@ -22,10 +20,6 @@ state$.subscribe(s => {
   updateTableRows(s);
   updateBarChart(s);
 });
-
-barChartChange$
-  .pipe(tap(cleanBarChartExtras), debounceTime(500), flatMap(() => state$))
-  .subscribe(updateBarChart);
 
 combineLatest(fromEvent(window, 'scroll'), state$)
   .pipe(debounceTime(500))
@@ -35,24 +29,31 @@ combineLatest(fromEvent(window, 'resize'), state$)
   .pipe(tap(cleanBarChartExtras), debounceTime(500))
   .subscribe(([, s]) => updateBarChart(s));
 
-
 // periodically check for new page
 timer(0, 1000)
   .pipe(
     filter(isNewPage),
     tap(cleanBarChartExtras),
-    tap(() => barChartMutationObserver.disconnect()),
     exhaustMap(() => from(loadData()))
   )
   .subscribe(data => {
-    idsOffest = 0;
-    document.querySelector('.chartPage button:first-child').addEventListener('click', () => idsOffest++);
-    document.querySelector('.chartPage button:last-child').addEventListener('click', () => {
-      idsOffest--;
-      idsOffest = idsOffest < 0 ? 0 : idsOffest;
-    });
+    barChartIdsOffest = 0;
     stateSubject.next(data);
-    updateBarChartMutationObserver();
+
+    // setup actions on current page
+    if (barChartActionsSubscription) { barChartActionsSubscription.unsubscribe(); }
+    barChartActionsSubscription = combineLatest(
+      merge(
+        fromEvent(document.querySelector('.chartPage button:first-child'), 'click').pipe(mapTo('left')),
+        fromEvent(document.querySelector('.chartPage button:last-child'), 'click').pipe(mapTo('right'))
+      ),
+      state$
+    ).subscribe(([direction, s]) => {
+      cleanBarChartExtras();
+      direction === 'left' ? barChartIdsOffest++ : barChartIdsOffest--;
+      barChartIdsOffest = barChartIdsOffest < 0 ? 0 : barChartIdsOffest;
+      setTimeout(() => updateBarChart(s), 1500);
+    });
   });
 
 
@@ -63,15 +64,6 @@ function loadData() {
       resolve(data);
     });
   });
-}
-
-function updateBarChartMutationObserver() {
-  const barChartHolder = document.querySelector('.bargraph svg');
-  if (!barChartHolder) {
-    setTimeout(() => updateBarChartMutationObserver(), 500);
-    return;
-  }
-  barChartMutationObserver.observe(barChartHolder, { childList: true, subtree: true });
 }
 
 function cleanBarChartExtras() {
@@ -108,8 +100,8 @@ function updateBarChart(data) {
     return result;
   }, {});
 
-  const offset = idsOffest === 0 ? 0 : idsOffest * 30;
-  const points = IDS.slice(offset, offset + 30).map(id => datePostMap[id]).reverse();
+  const offset = barChartIdsOffest === 0 ? 0 : barChartIdsOffest * 30;
+  const points = BAR_CHART_DATE_IDS.slice(offset, offset + 30).map(id => datePostMap[id]).reverse();
 
   Array.from(bars)
     .forEach((node, index) => {
