@@ -55,3 +55,23 @@ tfoot td.articles-count {
         font-weight: 700;
     }
 }
+
+.mes-barchart-extras div {
+    position: absolute;
+    border-radius: 50%;
+    border: solid rgba(0, 0, 0, 0.40);
+    background-color: #000;
+    background-clip: padding-box;
+    animation: appear 1s ease-in-out 1;
+}
+
+@keyframes appear {
+    0% {
+        opacity: 0;
+        transform: scale(3);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
