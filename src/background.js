@@ -22,7 +22,7 @@ function getStats(type) {
 }
 
 function calculateTotals(data) {
-  const { value: posts, references: userInfo } = data.payload;
+  const { value: posts = [], references: userInfo } = data && data.payload || {};
   const totals = { items: 0, views: 0, syndicatedViews: 0, reads: 0, fans: 0, claps: 0 };
   posts.forEach(article => {
     totals.items++;
