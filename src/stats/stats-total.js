@@ -48,12 +48,16 @@ timer(0, 1000)
         fromEvent(document.querySelector('.chartPage button:last-child'), 'click').pipe(mapTo('right'))
       ),
       state$
-    ).subscribe(([direction, s]) => {
-      cleanBarChartExtras();
-      direction === 'left' ? barChartIdsOffest++ : barChartIdsOffest--;
-      barChartIdsOffest = barChartIdsOffest < 0 ? 0 : barChartIdsOffest;
-      setTimeout(() => updateBarChart(s), 1500);
-    });
+    )
+    .pipe(
+      tap(([direction]) => {
+        cleanBarChartExtras();
+        direction === 'left' ? barChartIdsOffest++ : barChartIdsOffest--;
+        barChartIdsOffest = barChartIdsOffest < 0 ? 0 : barChartIdsOffest;
+      }),
+      debounceTime(1500)
+    )
+    .subscribe(([, s]) => updateBarChart(s));
   });
 
 
