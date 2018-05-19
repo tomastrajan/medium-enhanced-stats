@@ -14,7 +14,7 @@ html {
 
 body {
     color: var(--color-black);
-    width: 400px;
+    width: 450px;
     padding: 0;
     margin: 0;
     font-family: medium-content-sans-serif-font,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Open Sans","Helvetica Neue",sans-serif;
@@ -43,12 +43,19 @@ h1 .welcome {
 
 h1 .welcome .user {
     color: var(--color-black);
+    cursor: pointer;
 }
 
 h1 .welcome .user-avatar {
     border-radius: 50%;
     height: 32px;
     top: 11px;
+    cursor: pointer;
+    margin: 0 0 0 5px;
+}
+
+h1 .welcome .user-selector div {
+    cursor: pointer;
 }
 
 h1 img {
@@ -56,6 +63,37 @@ h1 img {
     display: inline-block;
     position: relative;
     top: 7px;
+}
+
+h1 .user-selector {
+    position: absolute;
+    top: 60px;
+    right: -10px;
+    padding: 10px 20px;
+    text-align: right;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-grey-lighter);
+    border-radius: 3px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.25), 0 0 1px rgba(0,0,0,.35);
+    display: none;
+}
+
+h1 .user-selector:after {
+    position: absolute;
+    top: -15px;
+    right: 18px;
+    box-shadow: rgba(0, 0, 0, 0.54) -1px -1px 1px -1px;
+    transform: rotate(45deg) translate(6px, 6px);
+    background: rgb(255, 255, 255);
+    height: 14px;
+    width: 14px;
+    display: block;
+    content: "";
+    z-index: 0;
+}
+
+h1 .user-selector .option {
+    height: 54px;
 }
 
 a {
@@ -252,6 +290,7 @@ footer .version {
     top:16px;
 }
 
+.loading h1 .user-selector,
 .loading table,
 .loading .chart-label,
 .loading .chart .progress,

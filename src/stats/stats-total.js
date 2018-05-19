@@ -11,7 +11,7 @@ let barChartActionsSubscription;
 const stateSubject = new BehaviorSubject(undefined);
 const state$ = stateSubject.asObservable().pipe(
   filter(s => !!s),
-  map(s => urlIncludes('responses') ? s.responses : s.articles)
+  map(s => urlIncludes('responses') ? s.user.totals.responses : s.user.totals.articles)
 );
 
 state$.subscribe(s => {

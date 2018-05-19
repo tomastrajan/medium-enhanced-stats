@@ -2,16 +2,23 @@ const $body = document.querySelector('body');
 const $table = document.querySelector('table');
 const $year = document.querySelector('.year');
 const $version = document.querySelector('.version');
+const $welcome = document.querySelector('.welcome');
 const $user = document.querySelector('.user');
 const $userAvatar = document.querySelector('.user-avatar');
+const $userSelector = document.querySelector('.user-selector');
 const $chartProgress = document.querySelector('.chart .progress');
 const $chartReach = document.querySelector('.chart .reach');
 const $chartMilestone = document.querySelector('.chart .milestone');
 const $buttonOpenStats = document.querySelector('.open-stats');
 const $buttonRefreshStats = document.querySelector('.refresh-stats');
 
+const AVATAR_URL = 'https://cdn-images-1.medium.com/fit/c/64/64/';
+
+let data;
+
 $year.textContent = (new Date()).getFullYear();
 $version.textContent = 'v' + chrome.runtime.getManifest().version;
+$welcome.addEventListener('click', () => $userSelector.style.display = 'block');
 $buttonOpenStats.addEventListener('click', () => openStatsPage());
 $buttonRefreshStats.addEventListener('click', () => {
   init();
@@ -22,16 +29,33 @@ init();
 function init() {
   $body.classList.add('loading');
   $chartProgress.setAttribute('stroke-dasharray', `0 100`);
-  chrome.runtime.sendMessage({ type: 'GET_TOTALS'}, {}, data => {
-    updateStatsTable('articles', data.articles);
-    updateStatsTable('responses', data.responses);
-    updateChart(data);
-    updateUser(data);
+  chrome.runtime.sendMessage({ type: 'GET_TOTALS'}, {}, s => {
+    data = s;
+    updateUserSelector(data);
+    updateUI(data.user);
     $body.classList.remove('loading');
   });
 }
 
-function updateStatsTable(type,totals) {
+function updateUI(account) {
+  updateStatsTable('articles', account.totals.articles);
+  updateStatsTable('responses', account.totals.responses);
+  updateChart(account.totals);
+  updateUser(account.name, account.avatar);
+}
+
+function updateAccount(id) {
+  $chartProgress.setAttribute('stroke-dasharray', `0 100`);
+  $chartProgress.style.display = 'none';
+  const account = id === 'user' ? data.user : data.collections[id];
+  setTimeout(() => {
+    $chartProgress.style.display = 'block';
+    $userSelector.style.display = 'none';
+    updateUI(account);
+  });
+}
+
+function updateStatsTable(type, totals) {
   const { items, views, reads, fans, claps, ratio } = totals;
   const $cols = $table.querySelectorAll(`.${type} td`);
   $cols[0].textContent = `${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
@@ -43,8 +67,8 @@ function updateStatsTable(type,totals) {
   $cols[6].textContent = formatValue(claps);
 }
 
-function updateChart(data) {
-  const { articles, responses } = data;
+function updateChart(totals) {
+  const { articles, responses } = totals;
   const reach = articles.views + responses.views;
   const milestone = '1'.padEnd(reach.toString().length + 1, '0');
   const progress = ((reach / milestone) * 100).toFixed(0);
@@ -53,10 +77,27 @@ function updateChart(data) {
   $chartMilestone.textContent = formatWholeNumber(milestone);
 }
 
-function updateUser(data) {
-  const { user } = data.articles;
-  $user.textContent = user.name;
-  $userAvatar.src = 'https://cdn-images-1.medium.com/fit/c/64/64/' + user.imageId;
+function updateUser(name, avatar) {
+  $user.textContent = name;
+  $userAvatar.src = AVATAR_URL + avatar;
+}
+
+function updateUserSelector(data) {
+  const { user, collections } = data;
+  const options = collections
+    .map((c, index)=> ({ id: index, label: c.name, avatar: c.avatar, account: c }));
+  options.unshift({ id: 'user', label: user.name, avatar: user.avatar, account: user });
+
+  $userSelector.innerHTML = `
+    ${options.map(o => `
+        <div class="option" data-id="${o.id}">
+            <span class="user">${o.label}</span>
+            <img class="user-avatar" src="${AVATAR_URL}${o.avatar}" />
+        </div>`
+    )}
+  `;
+  Array.from(document.querySelectorAll('.user-selector div'))
+    .forEach(n => n.addEventListener('click', () => updateAccount(n.getAttribute('data-id'))));
 }
 
 function formatValue(number) {
@@ -75,5 +116,3 @@ function formatWholeNumber(number) {
 function openStatsPage() {
   chrome.tabs.create({ url: 'https://medium.com/me/stats' });
 }
-
-// 100 1000 10000 100000 1000000 10000000
