@@ -32,7 +32,7 @@ function calculateTotals(data) {
     totals.fans += article.upvotes;
     totals.claps += article.claps;
   });
-  totals.ratio = ((totals.reads / totals.views) * 100).toFixed(2);
+  totals.ratio = totals.views === 0 ? 0 : ((totals.reads / totals.views) * 100).toFixed(2);
   totals.posts = posts;
   totals.user = userInfo.User ? userInfo.User[Object.keys(userInfo.User)[0]] : {}
   return totals;
