@@ -45,11 +45,11 @@ function updateUI(account) {
 }
 
 function updateAccount(id) {
+  $body.classList.add('loading');
   $chartProgress.setAttribute('stroke-dasharray', `0 100`);
-  $chartProgress.style.display = 'none';
   const account = id === 'user' ? data.user : data.collections[id];
   setTimeout(() => {
-    $chartProgress.style.display = 'block';
+    $body.classList.remove('loading');
     $userSelector.style.display = 'none';
     updateUI(account);
   });

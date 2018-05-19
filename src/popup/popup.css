@@ -150,14 +150,15 @@ button.outline:hover {
 }
 
 .refresh-stats:hover  > * {
-    transition: transform .5s ease-in-out;
-    transform: rotate(180deg);
+    animation: refresh-spin-hover 0.5s linear 1;
 }
 
 .refresh-stats:focus  > * {
-    transition: transform 1s ease-in-out;
-    transform: rotate(1080deg);
+    animation: refresh-spin-click 1s ease-in-out 1;
 }
+
+@keyframes refresh-spin-hover { 100% { transform: rotate(180deg); } }
+@keyframes refresh-spin-click { 100% { transform: rotate(720deg); } }
 
 .chart {
     flex: 15 1 auto;
