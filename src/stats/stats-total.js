@@ -88,7 +88,7 @@ function updateBarChart(data) {
   if (!barChartExtrasDOM) {
     barChartExtrasDOM = document.createElement('div');
     barChartExtrasDOM.className = 'mes-barchart-extras';
-    document.querySelector('body').appendChild(barChartExtrasDOM);
+    document.querySelector('.bargraph').appendChild(barChartExtrasDOM);
   }
   barChartExtrasDOM.innerHTML = '';
 
