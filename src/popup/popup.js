@@ -13,6 +13,7 @@ const $buttonOpenStats = document.querySelector('.open-stats');
 const $buttonRefreshStats = document.querySelector('.refresh-stats');
 
 const AVATAR_URL = 'https://cdn-images-1.medium.com/fit/c/64/64/';
+const LEVELS = generateLevels();
 
 let data;
 
@@ -70,8 +71,10 @@ function updateStatsTable(type, totals) {
 function updateChart(totals) {
   const { articles, responses } = totals;
   const reach = articles.views + responses.views;
-  const milestone = '1'.padEnd(reach.toString().length + 1, '0');
-  const progress = ((reach / milestone) * 100).toFixed(0);
+  const milestone = LEVELS.find(level => level > reach);
+  const milestonePrev = LEVELS[LEVELS.indexOf(milestone) - 1];
+  const milestoneDiff = milestone - milestonePrev;
+  const progress = (((reach - milestonePrev) / milestoneDiff) * 100).toFixed(0);
   $chartProgress.setAttribute('stroke-dasharray', `${progress} 100`);
   $chartReach.textContent = formatValue(reach);
   $chartMilestone.textContent = formatWholeNumber(milestone);
@@ -115,4 +118,44 @@ function formatWholeNumber(number) {
 
 function openStatsPage() {
   chrome.tabs.create({ url: 'https://medium.com/me/stats' });
+}
+
+function generateLevels() {
+  return [
+    0,
+    1000,
+    5000,
+    10000,
+    25000,
+    50000,
+    75000,
+    100000,
+    250000,
+    500000,
+    750000,
+    1000000,
+    2000000,
+    4000000,
+    6000000,
+    8000000,
+    10000000,
+    20000000,
+    30000000,
+    40000000,
+    50000000,
+    60000000,
+    70000000,
+    80000000,
+    90000000,
+    100000000,
+    200000000,
+    300000000,
+    400000000,
+    500000000,
+    600000000,
+    700000000,
+    800000000,
+    900000000,
+    1000000000
+  ];
 }
