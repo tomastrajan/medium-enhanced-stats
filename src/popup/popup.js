@@ -6,6 +6,10 @@ const $welcome = document.querySelector('.welcome');
 const $user = document.querySelector('.user');
 const $userAvatar = document.querySelector('.user-avatar');
 const $userSelector = document.querySelector('.user-selector');
+const $confetti = document.querySelector('.confetti');
+const $milestoneReached = document.querySelector('.milestone-reached-value');
+const $milestoneReachedValue = document.querySelector('.milestone-reached-value .value');
+const $milestoneReachedUnit = document.querySelector('.milestone-reached-value .unit');
 const $chartProgress = document.querySelector('.chart .progress');
 const $chartReach = document.querySelector('.chart .reach');
 const $chartMilestone = document.querySelector('.chart .milestone');
@@ -20,6 +24,7 @@ let data;
 $year.textContent = (new Date()).getFullYear();
 $version.textContent = 'v' + chrome.runtime.getManifest().version;
 $welcome.addEventListener('click', () => $userSelector.style.display = 'block');
+$confetti.addEventListener('click', () => confetti($confetti)); // easter egg
 $buttonOpenStats.addEventListener('click', () => openStatsPage());
 $buttonRefreshStats.addEventListener('click', () => {
   init();
@@ -78,6 +83,45 @@ function updateChart(totals) {
   $chartProgress.setAttribute('stroke-dasharray', `${progress} 100`);
   $chartReach.textContent = formatValue(reach);
   $chartMilestone.textContent = formatWholeNumber(milestone);
+
+  chrome.storage.sync.get(['milestoneActive'], ({ milestoneActive }) => {
+    console.log('active milestone', milestoneActive, milestone);
+    if(milestoneActive === undefined) {
+      chrome.storage.sync.set({ milestoneActive: milestone });
+      return;
+    }
+    if(milestone !== milestoneActive) {
+      showMilestoneReached(milestonePrev, progress);
+      chrome.storage.sync.set({ milestoneActive: milestone }, () => {});
+    }
+  });
+}
+
+function showMilestoneReached(milestone, progress) {
+  const value = formatValue(milestone);
+  $body.classList.add('milestone-reached');
+  $chartProgress.setAttribute('stroke-dasharray', `0 100`);
+  $milestoneReachedValue.textContent = value.slice(0, value.length - 2);
+  $milestoneReachedUnit.textContent = value.slice(-1);
+  setTimeout(() => {
+    $chartProgress.setAttribute('stroke-dasharray', `100 100`);
+    setTimeout(() => {
+      $milestoneReached.classList.add('milestone-reached-value-explode');
+      setTimeout(() => {
+        confetti($confetti);
+        $milestoneReached.classList.remove('milestone-reached-value-explode');
+        $body.classList.remove('milestone-reached');
+        $milestoneReachedValue.textContent = 0;
+        $milestoneReachedUnit.textContent = '';
+        $chartProgress.setAttribute('stroke-dasharray', `0 100`);
+        $chartProgress.style.display = 'none';
+        setTimeout(() => {
+          $chartProgress.setAttribute('stroke-dasharray', `${progress} 100`);
+          $chartProgress.style.display = '';
+        }, 100);
+      }, 1000);
+    }, 2000);
+  });
 }
 
 function updateUser(name, avatar) {
@@ -104,11 +148,13 @@ function updateUserSelector(data) {
 }
 
 function formatValue(number) {
-  return number >= 1000000
-    ? (number / 1000000).toFixed(1) + 'M'
-    :  number >= 1000
-        ? (number / 1000).toFixed(1) + 'K'
-        : number.toFixed(0);
+  return number >= 1000000000
+    ? (number / 1000000000).toFixed(1) + 'B'
+    : number >= 1000000
+      ? (number / 1000000).toFixed(1) + 'M'
+      :  number >= 1000
+          ? (number / 1000).toFixed(1) + 'K'
+          : number.toFixed(0);
 }
 
 function formatWholeNumber(number) {
@@ -156,6 +202,10 @@ function generateLevels() {
     700000000,
     800000000,
     900000000,
-    1000000000
+    1000000000,
+    10000000000,
+    100000000000,
+    1000000000000,
+    10000000000000
   ];
 }

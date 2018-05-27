@@ -2,7 +2,8 @@
 <html>
     <head>
         <link rel="stylesheet" href="popup.css">
-        <script defer src="fontawesome-all.min.js"></script>
+        <link rel="stylesheet" href="lib/odometer-theme-minimal.css">
+        <script defer src="lib/fontawesome-all.min.js"></script>
     </head>
     <body>
         <section>
@@ -47,6 +48,12 @@
                 <button class="outline refresh-stats" title="Refresh stats">
                     <i class="fas fa-sync-alt"></i>
                 </button>
+                <div class="confetti"></div>
+                <div class="milestone-reached-value">
+                    <span class="value odometer">0</span>
+                    <span class="unit"></span><br>
+                    <span class="description">MILESTONE REACHED</span>
+                </div>
             </div>
             <table>
                 <tr>
@@ -87,4 +94,6 @@
         </footer>
     </body>
     <script src="popup.js"></script>
+    <script src="lib/confetti.js"></script>
+    <script src="lib/odometer.min.js"></script>
 </html>
