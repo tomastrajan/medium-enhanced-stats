@@ -46,7 +46,7 @@ function init() {
 function updateUI(account) {
   updateStatsTable('articles', account.totals.articles);
   updateStatsTable('responses', account.totals.responses);
-  updateChart(account.totals);
+  updateChart(account.totals, account.id);
   updateUser(account.name, account.avatar);
 }
 
@@ -73,7 +73,7 @@ function updateStatsTable(type, totals) {
   $cols[6].textContent = formatValue(claps);
 }
 
-function updateChart(totals) {
+function updateChart(totals, id) {
   const { articles, responses } = totals;
   const reach = articles.views + responses.views;
   const milestone = LEVELS.find(level => level > reach);
@@ -84,15 +84,15 @@ function updateChart(totals) {
   $chartReach.textContent = formatValue(reach);
   $chartMilestone.textContent = formatWholeNumber(milestone);
 
-  chrome.storage.sync.get(['milestoneActive'], ({ milestoneActive }) => {
-    console.log('active milestone', milestoneActive, milestone);
-    if(milestoneActive === undefined) {
-      chrome.storage.sync.set({ milestoneActive: milestone });
+  chrome.storage.sync.get([id], result => {
+    console.log(result, milestone);
+    if(result[id] === undefined) {
+      chrome.storage.sync.set({ [id]: { milestoneActive: milestone } });
       return;
     }
-    if(milestone !== milestoneActive) {
+    if(milestone !== result[id].milestoneActive) {
       showMilestoneReached(milestonePrev, progress);
-      chrome.storage.sync.set({ milestoneActive: milestone }, () => {});
+      chrome.storage.sync.set({ [id]: { milestoneActive: milestone } });
     }
   });
 }

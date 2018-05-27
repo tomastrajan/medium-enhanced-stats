@@ -78,6 +78,7 @@ h1 .user-selector {
     border-radius: 3px;
     box-shadow: 0 1px 2px rgba(0,0,0,.25), 0 0 1px rgba(0,0,0,.35);
     display: none;
+    z-index: 10;
 }
 
 h1 .user-selector:after {

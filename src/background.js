@@ -4,6 +4,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     Promise.all([getStats('me', 'stats'), getStats('me', 'stats/responses')])
       .then(([articles, responses]) => {
         const user = getUser(articles);
+        user.id = user.userId;
         user.avatar = user.imageId;
         user.totals = {
           articles: calculateTotals(articles),
