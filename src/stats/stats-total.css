@@ -75,3 +75,19 @@ tfoot td.articles-count {
         transform: scale(1);
     }
 }
+
+.mes-action-show-in-chart {
+    color: rgba(0,0,0,.54) !important;
+    width: auto !important;
+    padding: 0 !important;
+    font-size: 16px !important;
+    font-weight: normal !important;
+}
+
+.mes-action-show-in-chart:hover {
+    text-decoration: underline;
+}
+
+.mes-post-bar {
+    fill: rgba(3, 159, 118, 0.9) !important;
+}

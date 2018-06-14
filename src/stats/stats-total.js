@@ -1,13 +1,16 @@
 log('start');
 
-const { from, fromEvent, merge, combineLatest, timer, BehaviorSubject } = rxjs;
-const { tap, map, mapTo, exhaustMap, filter, debounceTime } = rxjs.operators;
+const { from, fromEvent, merge, combineLatest, timer, BehaviorSubject, Subject } = rxjs;
+const { tap, map, mapTo, exhaustMap, filter, debounceTime, delay } = rxjs.operators;
 
 const BAR_CHART_DATE_IDS = generateDateIds();
 let barChartIdsOffest = 0;
 let barChartExtrasDOM;
 let barChartActionsSubscription;
+let barChartTypesSubscription;
+let barChartPostsStats = {};
 
+const barChartRefreshTrigger = new Subject(undefined);
 const stateSubject = new BehaviorSubject(undefined);
 const state$ = stateSubject.asObservable().pipe(
   filter(s => !!s),
@@ -58,27 +61,48 @@ timer(0, 1000)
       debounceTime(1500)
     )
     .subscribe(([, s]) => updateBarChart(s));
+
+    if (barChartTypesSubscription) { barChartTypesSubscription.unsubscribe(); }
+    barChartTypesSubscription = combineLatest(
+      merge(
+        fromEvent(document.querySelector('li[data-action="switch-graph"]:nth-child(1)'), 'click'),
+        fromEvent(document.querySelector('li[data-action="switch-graph"]:nth-child(2)'), 'click'),
+        fromEvent(document.querySelector('li[data-action="switch-graph"]:nth-child(3)'), 'click'),
+        barChartRefreshTrigger.asObservable(),
+      ),
+      state$
+    )
+    .pipe(tap(() => cleanBarChartExtras()), delay(1000))
+    .subscribe(([, s]) => updateBarChart(s));
   });
 
 
 function loadData() {
   log('load data');
-  return new Promise((resolve) => {
-    chrome.runtime.sendMessage({ type: 'GET_TOTALS'}, {}, data => {
-      resolve(data);
-    });
-  });
+  return new Promise((resolve) =>
+    chrome.runtime.sendMessage({ type: 'GET_TOTALS'}, {}, data => resolve(data)));
+}
+
+function loadPostStats(postId) {
+  log('load post stats');
+  return new Promise((resolve) =>
+    chrome.runtime.sendMessage({ type: 'GET_POST_STATS', postId }, {}, data => resolve(data)));
 }
 
 function cleanBarChartExtras() {
   if (barChartExtrasDOM) {
     barChartExtrasDOM.innerHTML = '';
   }
+  cleanBarChartPostBars();
+}
+
+function cleanBarChartPostBars() {
+  document.querySelectorAll('.mes-post-bar').forEach(node => node.remove());
 }
 
 function updateBarChart(data) {
   log('update barchart');
-  const bars = document.querySelectorAll('.bargraph-bar');
+  const bars = document.querySelectorAll('.bargraph-bar:not(.mes-post-bar)');
   if (!bars.length || bars.length > 30) {
     setTimeout(() => updateBarChart(data), 500);
     return;
@@ -90,7 +114,7 @@ function updateBarChart(data) {
     barChartExtrasDOM.className = 'mes-barchart-extras';
     document.querySelector('.bargraph').appendChild(barChartExtrasDOM);
   }
-  barChartExtrasDOM.innerHTML = '';
+  cleanBarChartExtras();
 
 
   const datePostMap = data.posts.reduce((result, post) => {
@@ -104,8 +128,10 @@ function updateBarChart(data) {
     return result;
   }, {});
 
-  const offset = barChartIdsOffest === 0 ? 0 : barChartIdsOffest * 30;
-  const points = BAR_CHART_DATE_IDS.slice(offset, offset + 30).map(id => datePostMap[id]).reverse();
+  const dateIds = getDateIds();
+  const points = dateIds.map(id => datePostMap[id]).reverse();
+  const postStats = barChartPostsStats.id && barChartPostsStats[barChartPostsStats.id];
+  const postBars = postStats && dateIds.map(id => postStats[id]).reverse();
 
   Array.from(bars)
     .forEach((node, index) => {
@@ -126,6 +152,22 @@ function updateBarChart(data) {
         point.setAttribute('data-tooltip', posts.map((p, i) =>
           `${posts.length > 1 ? `${i + 1}. ` : ''}${p.title}`).join(' '));
         barChartExtrasDOM.appendChild(point);
+      }
+
+      if (postBars && postBars[index]) {
+        const [value, type, ...rest] = node.getAttribute('data-tooltip').split(' ');
+        const nodeValue = parseInt(value.replace(',', ''), 10);
+        const postValue = postBars[index][type];
+        const ratio = parseFloat((postValue / nodeValue).toFixed(2));
+        const percentage = (ratio * 100).toFixed(0);
+        const height = (parseFloat(node.getAttribute('height')) * ratio).toFixed(1);
+        const title = data.posts.find(p => p.postId === barChartPostsStats.id).title;
+        const postBar = node.cloneNode();
+        postBar.setAttribute('class', 'bargraph-bar mes-post-bar');
+        postBar.setAttribute('height', height);
+        postBar.setAttribute('y', parseFloat(postBar.getAttribute('y')) + parseFloat(node.getAttribute('height')) - height);
+        postBar.setAttribute('data-tooltip', `${formatWholeNumber(postValue)} ${type} ${rest.join(' ')} (${percentage}% of total daily ${type}) ${title}`);
+        node.insertAdjacentElement('afterend', postBar);
       }
     });
 }
@@ -174,8 +216,58 @@ function updateTableRows(data) {
       if (post) {
         claps.textContent = formatValue(post.claps);
       }
+      const postTitleCell = row.querySelector('td:first-child');
+      const postTitleCellActions = postTitleCell.querySelector('.sortableTable-text');
+      if (postTitleCellActions.children.length <= 4) {
+         postTitleCellActions.innerHTML += '<span class="middotDivider"></span>';
+         postTitleCell.addEventListener('click', () => {
+           scrollToBarChart();
+           cleanBarChartExtras();
+           barChartPostsStats.id = undefined;
+           Promise
+             .resolve()
+             .then(() => barChartPostsStats[postId] || loadPostStats(postId))
+             .then(postStats => {
+               barChartPostsStats[postId] = postStats;
+               const dateId = Object.keys(postStats)[0];
+               let dateIds = getDateIds();
+               while (dateId > dateIds[0]) {
+                 barChartIdsOffest--;
+                 dateIds = getDateIds();
+               }
+               barChartRefreshTrigger.next();
+             });
+         });
+         const showPostChartInAction = document.createElement('button');
+         showPostChartInAction.textContent = 'Show in chart';
+         showPostChartInAction.className = 'mes-action-show-in-chart';
+         showPostChartInAction.addEventListener('click', event => {
+           event.stopPropagation();
+           deselectActivePost();
+           scrollToBarChart();
+           cleanBarChartPostBars();
+           Promise
+             .resolve()
+             .then(() => barChartPostsStats[postId] || loadPostStats(postId))
+             .then(postStats => {
+               barChartPostsStats.id = postId;
+               barChartPostsStats[postId] = postStats;
+               barChartRefreshTrigger.next();
+             });
+         });
+         postTitleCellActions.appendChild(showPostChartInAction);
+      }
     });
   document.querySelector('table thead th:last-child button').textContent = 'Fans & Claps';
+}
+
+function deselectActivePost() {
+  const activePostRow = document.querySelector('tr.is-active');
+  if (activePostRow) { activePostRow.click(); }
+}
+
+function scrollToBarChart() {
+  document.querySelector('.chartTabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function isNewPage() {
@@ -196,6 +288,11 @@ function formatValue(number) {
 
 function formatWholeNumber(number) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function getDateIds() {
+  const offset = barChartIdsOffest === 0 ? 0 : barChartIdsOffest * 30;
+  return BAR_CHART_DATE_IDS.slice(offset, offset + 30);
 }
 
 function generateDateIds() {
