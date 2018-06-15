@@ -160,7 +160,7 @@ function updateBarChart(data) {
         const postValue = postBars[index][type];
         const ratio = parseFloat((postValue / nodeValue).toFixed(2));
         const percentage = (ratio * 100).toFixed(0);
-        const height = (parseFloat(node.getAttribute('height')) * ratio).toFixed(1);
+        const height = ratio == 0 && postValue > 0 ? 5 : (parseFloat(node.getAttribute('height')) * ratio).toFixed(1);
         const title = data.posts.find(p => p.postId === barChartPostsStats.id).title;
         const postBar = node.cloneNode();
         postBar.setAttribute('class', 'bargraph-bar mes-post-bar');
@@ -192,7 +192,7 @@ function updateTableSummary(data) {
         <td title="Weighted average">${ratio}%</td>
         <td title="${formatWholeNumber(fans)}">
             ${formatValue(fans)}
-            <span class="claps">${formatValue(claps)}</span>
+            <span class="claps" title="${formatWholeNumber(claps)}">${formatValue(claps)}</span>
         </td>
       </tr>
     `;
@@ -215,6 +215,7 @@ function updateTableRows(data) {
       }
       if (post) {
         claps.textContent = formatValue(post.claps);
+        claps.title = formatWholeNumber(post.claps);
       }
       const postTitleCell = row.querySelector('td:first-child');
       const postTitleCellActions = postTitleCell.querySelector('.sortableTable-text');
@@ -280,9 +281,9 @@ function urlIncludes(text) {
 
 function formatValue(number) {
   return number >= 1000000
-    ? (number / 1000000).toFixed(1) + 'M'
+    ? (Math.floor(number / 100000) / 10).toFixed(1) + 'M'
     :  number >= 1000
-      ? (number / 1000).toFixed(1) + 'K'
+      ? (Math.floor(number / 100) / 10).toFixed(1) + 'K'
       : number.toFixed(0);
 }
 
