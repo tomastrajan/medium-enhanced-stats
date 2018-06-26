@@ -344,6 +344,12 @@ footer .version {
     top:16px;
 }
 
+footer .support {
+    position: absolute;
+    left: 20px;
+    top:16px;
+}
+
 .loading h1 .user-selector,
 .loading table,
 .loading .chart-label,
