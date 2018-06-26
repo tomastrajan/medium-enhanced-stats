@@ -186,7 +186,7 @@ function updateTableSummary(data) {
         <td title="Items count" class="articles-count">${formatValue(items)}</td>
         <td title="${formatWholeNumber(views)}">
           ${formatValue(views)}
-          ${syndicatedViews ? `<span>+${formatValue(syndicatedViews)}</span>` : ''}
+          ${syndicatedViews ? `<span class="syndicated-views">+${formatValue(syndicatedViews)}</span>` : ''}
         </td>
         <td title="${formatWholeNumber(reads)}">${formatValue(reads)}</td>
         <td title="Weighted average">${ratio}%</td>
@@ -194,7 +194,7 @@ function updateTableSummary(data) {
             ${formatValue(fans)}
             <span class="claps" title="${formatWholeNumber(claps)}">
                 ${formatValue(claps)}
-                <span class="clapsPerFan" title="Claps per Fan">${clapsPerFan}</span>
+                <span class="claps-per-fan" title="Claps per Fan">${clapsPerFan}</span>
             </span>
         </td>
       </tr>
@@ -220,7 +220,7 @@ function updateTableRows(data) {
         const clapsPerFan = (post.claps / post.upvotes).toFixed(2);
         claps.innerHTML = `
           <span title="${formatWholeNumber(post.claps)}">${formatValue(post.claps)}</span>
-          <span class="clapsPerFan" title="Claps per Fan">${clapsPerFan}</span>
+          <span class="claps-per-fan" title="Claps per Fan">${clapsPerFan}</span>
         `;
       }
       const postTitleCell = row.querySelector('td:first-child');

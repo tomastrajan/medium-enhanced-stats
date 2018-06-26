@@ -1,6 +1,5 @@
 .sortableTableWrapper th:last-child {
     min-width: 130px !important;
-    padding-left: 15px !important;
 }
 
 .sortableTableWrapper th:last-child button {
@@ -10,10 +9,14 @@
 table .claps {
     position: relative;
     display: inline-block;
-    width: 60%;
+    width: 75px;
 }
 
-table .claps .clapsPerFan {
+table th .claps {
+    width: 70px;
+}
+
+table .claps .claps-per-fan {
     position: absolute;
     top: 30px;
     right: 0;
@@ -37,7 +40,7 @@ tfoot .claps {
     position: relative;
 }
 
-tfoot .claps .clapsPerFan {
+tfoot .claps .claps-per-fan {
     position: absolute;
     top: 30px;
     right: 0;
@@ -50,19 +53,15 @@ tfoot td.articles-count {
     text-align: left !important;
 }
 
+tfoot td .syndicated-views {
+    font-size: 70%;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.54);
+}
+
 @media screen and (max-width: 991px) {
-    tbody .claps {
-        position: relative;
-        top: -24px;
-        text-align: right;
-        font-size: 100%;
-    }
-
-    table .claps .clapsPerFan {
-        font-size: 80%;
-        right: -50px;
-        top: 7px;
-
+    tbody .claps, tfoot .claps {
+        display: none;
     }
 
     tfoot td:first-child {
@@ -76,9 +75,6 @@ tfoot td.articles-count {
 }
 
 @media screen and (max-width: 500px) {
-    tbody .claps {
-        display: none;
-    }
     tfoot td {
         font-size: 15px;
         font-weight: 700;
