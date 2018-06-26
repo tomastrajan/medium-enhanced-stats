@@ -173,7 +173,7 @@ function updateBarChart(data) {
 }
 
 function updateTableSummary(data) {
-  const { items, views, syndicatedViews, reads, fans, claps, ratio } = data;
+  const { items, views, syndicatedViews, reads, fans, claps, clapsPerFan, ratio } = data;
   log('update table summary');
   const table = document.querySelector('table');
   let tfoot = table.querySelector('tfoot');
@@ -192,7 +192,10 @@ function updateTableSummary(data) {
         <td title="Weighted average">${ratio}%</td>
         <td title="${formatWholeNumber(fans)}">
             ${formatValue(fans)}
-            <span class="claps" title="${formatWholeNumber(claps)}">${formatValue(claps)}</span>
+            <span class="claps" title="${formatWholeNumber(claps)}">
+                ${formatValue(claps)}
+                <span class="clapsPerFan" title="Claps per Fan">${clapsPerFan}</span>
+            </span>
         </td>
       </tr>
     `;
@@ -214,8 +217,11 @@ function updateTableRows(data) {
         fansCell.appendChild(claps);
       }
       if (post) {
-        claps.textContent = formatValue(post.claps);
-        claps.title = formatWholeNumber(post.claps);
+        const clapsPerFan = (post.claps / post.upvotes).toFixed(2);
+        claps.innerHTML = `
+          <span title="${formatWholeNumber(post.claps)}">${formatValue(post.claps)}</span>
+          <span class="clapsPerFan" title="Claps per Fan">${clapsPerFan}</span>
+        `;
       }
       const postTitleCell = row.querySelector('td:first-child');
       const postTitleCellActions = postTitleCell.querySelector('.sortableTable-text');
@@ -259,7 +265,9 @@ function updateTableRows(data) {
          postTitleCellActions.appendChild(showPostChartInAction);
       }
     });
-  document.querySelector('table thead th:last-child button').textContent = 'Fans & Claps';
+  const fansHeadCell = document.querySelector('table thead th:last-child button');
+  fansHeadCell.innerHTML = `Fans <span class="claps">Claps</span>`;
+  fansHeadCell.title = 'Fans, Claps and Claps per Fan'
 }
 
 function deselectActivePost() {

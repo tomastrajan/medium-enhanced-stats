@@ -315,6 +315,7 @@ table td:first-child {
 }
 
 table th {
+    cursor: default;
     border-bottom: 2px solid;
 }
 

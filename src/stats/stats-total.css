@@ -1,10 +1,25 @@
+.sortableTableWrapper th:last-child {
+    min-width: 130px !important;
+    padding-left: 15px !important;
+}
+
+.sortableTableWrapper th:last-child button {
+    width: 100% !important;
+}
+
 table .claps {
+    position: relative;
     display: inline-block;
-    width: 45%;
-    font-size: 70%;
+    width: 60%;
+}
+
+table .claps .clapsPerFan {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    font-size: 60%;
     font-weight: normal;
     color: rgba(0, 0, 0, 0.54);
-    padding: 5px 0 0 0;
 }
 
 tfoot td {
@@ -18,10 +33,17 @@ tfoot td {
     overflow: visible;
 }
 
-tfoot td span {
-    font-size: 70%;
-    color: rgba(0,0,0,.54);
+tfoot .claps {
+    position: relative;
+}
+
+tfoot .claps .clapsPerFan {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    font-size: 60%;
     font-weight: normal;
+    color: rgba(0, 0, 0, 0.54);
 }
 
 tfoot td.articles-count {
@@ -34,6 +56,13 @@ tfoot td.articles-count {
         top: -24px;
         text-align: right;
         font-size: 100%;
+    }
+
+    table .claps .clapsPerFan {
+        font-size: 80%;
+        right: -50px;
+        top: 7px;
+
     }
 
     tfoot td:first-child {

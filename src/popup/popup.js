@@ -62,7 +62,7 @@ function updateAccount(id) {
 }
 
 function updateStatsTable(type, totals) {
-  const { items, views, reads, fans, claps, ratio } = totals;
+  const { items, views, reads, fans, claps, clapsPerFan, ratio } = totals;
   const $cols = $table.querySelectorAll(`.${type} td`);
   $cols[0].textContent = `${type.slice(0, 1).toUpperCase()}${type.slice(1)}`;
   $cols[1].textContent = formatValue(items);
@@ -71,6 +71,7 @@ function updateStatsTable(type, totals) {
   $cols[4].textContent = ratio + '%';
   $cols[5].textContent = formatValue(fans);
   $cols[6].textContent = formatValue(claps);
+  $cols[7].textContent = clapsPerFan;
 }
 
 function updateChart(totals, id) {
@@ -85,7 +86,6 @@ function updateChart(totals, id) {
   $chartMilestone.textContent = formatWholeNumber(milestone);
 
   chrome.storage.sync.get([id], result => {
-    console.log(result, milestone);
     if(result[id] === undefined) {
       chrome.storage.sync.set({ [id]: { milestoneActive: milestone } });
       return;
