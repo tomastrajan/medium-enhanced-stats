@@ -143,7 +143,7 @@ function updateUserSelector(data) {
             <span class="user">${o.label}</span>
             <img class="user-avatar" src="${AVATAR_URL}${o.avatar}" />
         </div>`
-    )}
+    ).join('')}
   `;
   Array.from(document.querySelectorAll('.user-selector div'))
     .forEach(n => n.addEventListener('click', () => updateAccount(n.getAttribute('data-id'))));
