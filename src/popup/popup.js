@@ -17,7 +17,7 @@ const $buttonOpenStats = document.querySelector('.open-stats');
 const $buttonRefreshStats = document.querySelector('.refresh-stats');
 
 const AVATAR_URL = 'https://cdn-images-1.medium.com/fit/c/64/64/';
-const LEVELS = generateLevels();
+const MILESTONES = generateMilestones();
 
 let data;
 
@@ -77,10 +77,10 @@ function updateStatsTable(type, totals) {
 function updateChart(totals, id) {
   const { articles, responses } = totals;
   const reach = articles.views + responses.views;
-  const milestone = LEVELS.find(level => level > reach);
-  const milestonePrev = LEVELS[LEVELS.indexOf(milestone) - 1];
+  const milestone = MILESTONES.find(m => m > reach);
+  const milestonePrev = MILESTONES[MILESTONES.indexOf(milestone) - 1];
   const milestoneDiff = milestone - milestonePrev;
-  const progress = (((reach - milestonePrev) / milestoneDiff) * 100).toFixed(0);
+  const progress = milestoneDiff === 0 ? 0 : (((reach - milestonePrev) / milestoneDiff) * 100).toFixed(0);
   $chartProgress.setAttribute('stroke-dasharray', `${progress} 100`);
   $chartReach.textContent = formatValue(reach);
   $chartMilestone.textContent = formatWholeNumber(milestone);
@@ -147,7 +147,7 @@ function updateUserSelector(data) {
     .forEach(n => n.addEventListener('click', () => updateAccount(n.getAttribute('data-id'))));
 }
 
-function formatValue(number) {
+function formatValue(number = 0) {
   return number >= 1000000000
     ? (Math.floor(number / 100000000) / 10).toFixed(1) + 'B'
     : number >= 1000000
@@ -157,16 +157,15 @@ function formatValue(number) {
           : number.toFixed(0);
 }
 
-function formatWholeNumber(number) {
+function formatWholeNumber(number = 0) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
-
 
 function openStatsPage() {
   chrome.tabs.create({ url: 'https://medium.com/me/stats' });
 }
 
-function generateLevels() {
+function generateMilestones() {
   return [
     0,
     1000,

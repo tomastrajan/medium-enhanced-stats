@@ -158,7 +158,7 @@ function updateBarChart(data) {
         const [value, type, ...rest] = node.getAttribute('data-tooltip').split(' ');
         const nodeValue = parseInt(value.replace(',', ''), 10);
         const postValue = postBars[index][type];
-        const ratio = parseFloat((postValue / nodeValue).toFixed(2));
+        const ratio = nodeValue === 0 ? 0 : parseFloat((postValue / nodeValue).toFixed(2));
         const percentage = (ratio * 100).toFixed(0);
         const height = ratio == 0 && postValue > 0 ? 5 : (parseFloat(node.getAttribute('height')) * ratio).toFixed(1);
         const title = data.posts.find(p => p.postId === barChartPostsStats.id).title;
@@ -217,7 +217,7 @@ function updateTableRows(data) {
         fansCell.appendChild(claps);
       }
       if (post) {
-        const clapsPerFan = (post.claps / post.upvotes).toFixed(2);
+        const clapsPerFan = post.upvotes === 0 ? 0 : (post.claps / post.upvotes).toFixed(2);
         claps.innerHTML = `
           <span title="${formatWholeNumber(post.claps)}">${formatValue(post.claps)}</span>
           <span class="claps-per-fan" title="Claps per Fan">${clapsPerFan}</span>
@@ -287,15 +287,17 @@ function urlIncludes(text) {
   return window.location.pathname.includes(text);
 }
 
-function formatValue(number) {
-  return number >= 1000000
-    ? (Math.floor(number / 100000) / 10).toFixed(1) + 'M'
-    :  number >= 1000
-      ? (Math.floor(number / 100) / 10).toFixed(1) + 'K'
-      : number.toFixed(0);
+function formatValue(number = 0) {
+  return number >= 1000000000
+    ? (Math.floor(number / 100000000) / 10).toFixed(1) + 'B'
+    : number >= 1000000
+      ? (Math.floor(number / 100000) / 10).toFixed(1) + 'M'
+      :  number >= 1000
+        ? (Math.floor(number / 100) / 10).toFixed(1) + 'K'
+        : number.toFixed(0);
 }
 
-function formatWholeNumber(number) {
+function formatWholeNumber(number = 0) {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
@@ -318,6 +320,6 @@ function generateDateIds() {
   return ids.reverse();
 }
 
-function log(item) {
-  console.log('Medium Enhanced Stats -', item);
+function log(...args) {
+  console.log('Medium Enhanced Stats -', ...args);
 }
