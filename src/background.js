@@ -1,5 +1,7 @@
+const API_URL = 'https://medium.com';
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  const { type, postId } = request;
+  const { type, postId, username } = request;
   if (type === 'GET_TOTALS') {
     handleGetTotals().then(sendResponse);
   }
@@ -11,19 +13,28 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 function handleGetTotals() {
-  return Promise.all([getStats('me', 'stats'), getStats('me', 'stats/responses')])
-    .then(([articles, responses]) => {
+  return Promise.all([
+      request(`${API_URL}/me/stats?limit=100000`),
+      request(`${API_URL}/me/stats/responses?limit=100000`)
+    ])
+    .then(([articles, responses]) =>
+      request(`${API_URL}/@${getUser(articles).username}/followers`)
+        .then(followers => ([articles, responses, followers]))
+    )
+    .then(([articles, responses, followers]) => {
       const user = getUser(articles);
       user.id = user.userId;
+      user.followers = getFollowers(followers);
       user.avatar = user.imageId;
       user.totals = {
         articles: calculateTotals(articles),
         responses: calculateTotals(responses)
       };
       const collections = getCollections(articles);
-      return Promise.all(collections.map(c => getStats(c.slug, 'stats')))
+      return Promise.all(collections.map(c => request(`${API_URL}/${c.slug}/stats?limit=100000`)))
         .then(collectionsStats => {
           collections.forEach((c, index) => {
+            c.followers = c.metadata.followerCount;
             c.avatar = c.image.imageId;
             c.totals = {
               articles: calculateTotals(collectionsStats[index]),
@@ -36,28 +47,14 @@ function handleGetTotals() {
 }
 
 function handleGetPostStats(postId) {
-  return getPostStats(postId)
-    .then(calculatePostStats)
+  return request(`${API_URL}/stats/${postId}/0/${Date.now()}`)
+    .then(calculatePostStats);
 }
 
-function getStats(user, type) {
-  return fetch(`https://medium.com/${user}/${type}?limit=100000`, {
-    credentials: "same-origin",
-    headers: { accept: 'application/json' }
-  })
+function request(url) {
+  return fetch(url, { credentials: "same-origin", headers: { accept: 'application/json' } })
     .then(res => res.text())
-    .then(text => JSON.parse(text.slice(16)))
-    .then(data => data.payload);
-}
-
-function getPostStats(postId) {
-  return fetch(`https://medium.com/stats/${postId}/0/${Date.now()}`, {
-    credentials: "same-origin",
-    headers: { accept: 'application/json' }
-  })
-    .then(res => res.text())
-    .then(text => JSON.parse(text.slice(16)))
-    .then(data => data.payload);
+    .then(text => JSON.parse(text.slice(16)).payload)
 }
 
 function getUser(data) {
@@ -68,6 +65,11 @@ function getUser(data) {
 function getCollections(data) {
   const collections = data && data.references &&  data.references.Collection || {};
   return Object.values(collections).filter(c => c.virtuals.permissions.canViewStats);
+}
+
+function getFollowers(data) {
+  const followers = data && data.references && data.references.SocialStats;
+  return (Object.values(followers)[0] || {}).usersFollowedByCount;
 }
 
 function calculateTotals(data) {

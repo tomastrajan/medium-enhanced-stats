@@ -38,14 +38,28 @@ h1 span {
 }
 
 h1 .welcome {
+    position: relative;
+    top:1px;
     float: right;
     font-weight: normal;
     font-size: 14px;
+    text-align: right;
+}
+
+h1 .welcome .info {
+    display: inline-block;
+    position: relative;
+    top: 8px;
+    line-height: 15px;
 }
 
 h1 .welcome .user {
     color: var(--color-black);
     cursor: pointer;
+}
+
+h1 .welcome .followers {
+    font-size: 12px;
 }
 
 h1 .welcome .user-avatar {
