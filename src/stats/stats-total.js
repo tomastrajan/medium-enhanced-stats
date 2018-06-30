@@ -1,3 +1,10 @@
+const loggly = new LogglyTracker();
+loggly.push({
+  logglyKey: 'c5cb1f4e-0af5-459d-8e74-dd390ae4215d',
+  sendConsoleErrors: true,
+  tag: 'mes-stats'
+});
+
 log('start');
 
 const { from, fromEvent, merge, combineLatest, timer, BehaviorSubject, Subject } = rxjs;

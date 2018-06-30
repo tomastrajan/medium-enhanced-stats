@@ -1,7 +1,14 @@
+const loggly = new LogglyTracker();
+loggly.push({
+  logglyKey: 'c5cb1f4e-0af5-459d-8e74-dd390ae4215d',
+  sendConsoleErrors: true,
+  tag: 'mes-background'
+});
+
 const API_URL = 'https://medium.com';
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  const { type, postId, username } = request;
+  const { type, postId } = request;
   if (type === 'GET_TOTALS') {
     handleGetTotals().then(sendResponse);
   }
