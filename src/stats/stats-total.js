@@ -217,6 +217,8 @@ function updateTableRows(data) {
       const postId = row.getAttribute('data-action-value');
       const post = data.posts.find(post => post.postId === postId);
       const fansCell = row.querySelector('td:last-child .sortableTable-number');
+      const articleTitle = row.querySelector('.sortableTable-title');
+      articleTitle.title = (new Date(post.firstPublishedAt)).toLocaleDateString();
       let claps = fansCell.querySelector('.claps');
       if (!claps) {
         claps = document.createElement('span');
