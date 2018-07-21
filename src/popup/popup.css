@@ -192,6 +192,62 @@ a:hover {
     perspective: 100px;
 }
 
+.actions .info {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    margin-left: -8px;
+    height: 16px;
+    width: 16px;
+    color: var(--color-grey-lighter);
+    cursor: pointer;
+    overflow: visible;
+}
+
+.actions .info:hover .description {
+    top: 30px;
+    opacity: 1;
+}
+
+.actions .info .description {
+    transition: all 0.3s;
+    position: absolute;
+    left: -92px;
+    top: 40px;
+    opacity: 0;
+    width: 200px;
+    color: var(--color-grey);
+    background-color: var(--color-black);
+    padding: 15px 5px;
+    border-radius: 3px;
+    z-index: 100;
+    text-align: center;
+    pointer-events: none;
+}
+
+.actions .info .description:after {
+    position: absolute;
+    top: -15px;
+    left: 93px;
+    box-shadow: rgba(0, 0, 0, 0.54) -1px -1px 1px -1px;
+    transform: rotate(45deg) translate(6px, 6px);
+    background: var(--color-black);
+    height: 14px;
+    width: 14px;
+    display: block;
+    content: "";
+    z-index: 0;
+}
+
+.actions .info .description span.highlight {
+    color: var(--color-white);
+    font-weight: bold;
+}
+
+.actions .info .description span.nowrap {
+    white-space: nowrap;
+}
+
 @keyframes shake {
     10%, 90% { transform: translate3d(-1px, -2px, -2px); }
     20%, 80% { transform: translate3d(2px, -4px, 1px); }
@@ -380,6 +436,7 @@ footer .support {
 .loading table,
 .loading .chart-label,
 .loading .chart .progress,
+.loading .actions .info,
 .loading .welcome {
     display: none;
 }

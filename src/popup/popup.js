@@ -18,6 +18,11 @@ const $confetti = document.querySelector('.confetti');
 const $milestoneReached = document.querySelector('.milestone-reached-value');
 const $milestoneReachedValue = document.querySelector('.milestone-reached-value .value');
 const $milestoneReachedUnit = document.querySelector('.milestone-reached-value .unit');
+const $infoMilestonePrev = document.querySelector('.info .milestone-prev');
+const $infoMilestoneNext = document.querySelector('.info .milestone-next');
+const $infoMilestoneCurrent = document.querySelector('.info .milestone-current');
+const $infoMilestoneProgress = document.querySelector('.info .milestone-progress');
+const $infoMilestoneDiff = document.querySelector('.info .milestone-diff');
 const $chartProgress = document.querySelector('.chart .progress');
 const $chartReach = document.querySelector('.chart .reach');
 const $chartMilestone = document.querySelector('.chart .milestone');
@@ -92,6 +97,12 @@ function updateChart(totals, id) {
   $chartProgress.setAttribute('stroke-dasharray', `${progress} 100`);
   $chartReach.textContent = formatValue(reach);
   $chartMilestone.textContent = formatWholeNumber(milestone);
+
+  $infoMilestonePrev.textContent = formatWholeNumber(milestonePrev);
+  $infoMilestoneNext.textContent = formatWholeNumber(milestone);
+  $infoMilestoneDiff.textContent = formatWholeNumber(milestoneDiff);
+  $infoMilestoneCurrent.textContent = formatWholeNumber(reach - milestonePrev);
+  $infoMilestoneProgress.textContent = `${progress}%`;
 
   chrome.storage.sync.get([id], result => {
     if(result[id] === undefined) {
