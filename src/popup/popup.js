@@ -12,6 +12,7 @@ const $version = document.querySelector('.version');
 const $welcome = document.querySelector('.welcome');
 const $user = document.querySelector('.user');
 const $userAvatar = document.querySelector('.user-avatar');
+const $userMembership = document.querySelector('.user-membership');
 const $userFollowers = document.querySelector('.user-followers');
 const $userSelector = document.querySelector('.user-selector');
 const $confetti = document.querySelector('.confetti');
@@ -60,7 +61,7 @@ function updateUI(account) {
   updateStatsTable('articles', account.totals.articles);
   updateStatsTable('responses', account.totals.responses);
   updateChart(account.totals, account.id);
-  updateUser(account.name, account.avatar, account.followers);
+  updateUser(account.name, account.avatar, account.followers, account.isMember);
 }
 
 function updateAccount(id) {
@@ -143,10 +144,11 @@ function showMilestoneReached(milestone, progress) {
   });
 }
 
-function updateUser(name, avatar, followers) {
+function updateUser(name, avatar, followers, isMember) {
   $user.textContent = name;
   $userFollowers.textContent = formatWholeNumber(followers);
   $userAvatar.src = AVATAR_URL + avatar;
+  $userMembership.style.display = isMember ? 'block' : 'none';
 }
 
 function updateUserSelector(data) {

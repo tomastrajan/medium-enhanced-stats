@@ -5,7 +5,14 @@ loggly.push({
   tag: 'mes-background'
 });
 
+const perf = new LogglyTracker();
+perf.push({
+  logglyKey: 'c5cb1f4e-0af5-459d-8e74-dd390ae4215d',
+  tag: 'mes-perf'
+});
+
 const API_URL = 'https://medium.com';
+const timers = {};
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   const { type, postId } = request;
@@ -30,17 +37,22 @@ chrome.runtime.onInstalled.addListener(details => {
 });
 
 function handleGetTotals() {
+  timer('user');
   return Promise.all([
       request(`${API_URL}/me/stats?limit=100000`),
       request(`${API_URL}/me/stats/responses?limit=100000`)
     ])
-    .then(([articles, responses]) =>
-      request(`${API_URL}/@${getUser(articles).username}/followers`)
+    .then(([articles, responses]) => {
+      perf.push({ time: timer('user'), type: 'request-user' });
+      timer('followers');
+      return request(`${API_URL}/@${getUser(articles).username}/followers`)
         .then(followers => ([articles, responses, followers]))
-    )
+    })
     .then(([articles, responses, followers]) => {
+      perf.push({ time: timer('followers'), type: 'request-followers' });
       const user = getUser(articles);
       user.id = user.userId;
+      user.isMember = user.mediumMemberAt !== 0;
       user.followers = getFollowers(followers);
       user.avatar = user.imageId;
       user.totals = {
@@ -48,6 +60,7 @@ function handleGetTotals() {
         responses: calculateTotals(responses)
       };
       const collections = getCollections(articles);
+      timer('collections');
       return Promise.all(collections.map(c => request(`${API_URL}/${c.slug}/stats?limit=100000`)))
         .then(collectionsStats => {
           collections.forEach((c, index) => {
@@ -58,6 +71,7 @@ function handleGetTotals() {
               responses: calculateTotals()
             }
           });
+          perf.push({ time: timer('collections'), type: 'request-collections' });
           return { user, collections };
         });
     });
@@ -118,4 +132,14 @@ function calculatePostStats(data) {
     result[key].claps += item.claps;
     return result;
   }, {});
+}
+
+function timer(id) {
+  if (!timers[id]) {
+    timers[id] = window.performance.now();
+  } else {
+    const result = window.performance.now() - timers[id];
+    delete timers[id];
+    return result;
+  }
 }

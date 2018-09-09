@@ -14,6 +14,7 @@ html {
 
 body {
     color: var(--color-black);
+    background-color: var(--color-white);
     width: 450px;
     padding: 0;
     margin: 0;
@@ -68,6 +69,14 @@ h1 .welcome .user-avatar {
     top: 11px;
     cursor: pointer;
     margin: 0 0 0 5px;
+}
+
+h1 .welcome .user-membership {
+    position: absolute;
+    top: 7px;
+    right: -4px;
+    height: 40px;
+    fill: var(--color-brand);
 }
 
 h1 .welcome .user-selector div {
@@ -411,6 +420,7 @@ footer {
     padding: 5px 0 15px 0;
     color:  var(--color-grey);
     position: relative;
+    background-color: var(--color-white);
 }
 
 footer a img {
