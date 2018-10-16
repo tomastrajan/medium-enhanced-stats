@@ -171,11 +171,11 @@ function updateUserSelector(data) {
 
 function formatValue(number = 0) {
   return number >= 1000000000
-    ? (Math.floor(number / 100000000) / 10).toFixed(1) + 'B'
+    ? (Math.floor(number / 10000000) / 100).toFixed(2) + 'B'
     : number >= 1000000
-      ? (Math.floor(number / 100000) / 10).toFixed(1) + 'M'
+      ? (Math.floor(number / 10000) / 100).toFixed(2) + 'M'
       :  number >= 1000
-          ? (Math.floor(number / 100) / 10).toFixed(1) + 'K'
+          ? (Math.floor(number / 10) / 100).toFixed(2) + 'K'
           : number.toFixed(0);
 }
 
