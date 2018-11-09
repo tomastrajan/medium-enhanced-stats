@@ -18,9 +18,18 @@ table th .claps {
 
 table .claps .claps-per-fan {
     position: absolute;
-    top: 30px;
+    top: 28px;
     right: 0;
-    font-size: 60%;
+    font-size: 55%;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+table .claps .claps-per-views-ratio {
+    position: absolute;
+    top: -17px;
+    right: 0;
+    font-size: 55%;
     font-weight: normal;
     color: rgba(0, 0, 0, 0.54);
 }

@@ -116,6 +116,7 @@ function calculateTotals(data) {
   });
   totals.ratio = totals.views === 0 ? 0 : ((totals.reads / totals.views) * 100).toFixed(2);
   totals.clapsPerFan = totals.fans === 0 ? 0 : (totals.claps / totals.fans).toFixed(2);
+  totals.clapsPerViewsRatio = totals.fans === 0 ? 0 : ((totals.claps / totals.views) * 100).toFixed(2);
   totals.posts = posts;
   return totals;
 }

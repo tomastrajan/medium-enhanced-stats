@@ -227,9 +227,11 @@ function updateTableRows(data) {
       }
       if (post) {
         const clapsPerFan = post.upvotes === 0 ? 0 : (post.claps / post.upvotes).toFixed(2);
+        const clapsPerViewsRatio = post.upvotes === 0 ? 0 : ((post.claps / post.views) * 100).toFixed(1);
         claps.innerHTML = `
           <span title="${formatWholeNumber(post.claps)}">${formatValue(post.claps)}</span>
           <span class="claps-per-fan" title="Claps per Fan">${clapsPerFan}</span>
+          <span class="claps-per-views-ratio" title="Claps per Views Ratio">${clapsPerViewsRatio}%</span>
         `;
       }
       const postTitleCell = row.querySelector('td:first-child');
