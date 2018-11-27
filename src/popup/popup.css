@@ -47,7 +47,7 @@ h1 .welcome {
     text-align: right;
 }
 
-h1 .welcome .info {
+h1 .welcome .user-details {
     display: inline-block;
     position: relative;
     top: 9px;
@@ -432,8 +432,19 @@ footer a img {
 
 footer .version {
     position: absolute;
+    right: 45px;
+    top:16px;
+}
+
+footer .screenshot {
+    position: absolute;
     right: 20px;
     top:16px;
+    cursor: pointer;
+}
+
+footer .screenshot:hover {
+    color: var(--color-brand);
 }
 
 footer .support {
@@ -453,6 +464,11 @@ footer .support {
 
 .loading .chart .spinner {
     display: block;
+}
+
+.loading .screenshot {
+    pointer-events: none;
+    color: var(--color-grey-lighter);
 }
 
 .milestone-reached .chart-label {

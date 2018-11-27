@@ -9,6 +9,7 @@ const $body = document.querySelector('body');
 const $table = document.querySelector('table');
 const $year = document.querySelector('.year');
 const $version = document.querySelector('.version');
+const $screenshot = document.querySelector('.screenshot');
 const $welcome = document.querySelector('.welcome');
 const $user = document.querySelector('.user');
 const $userAvatar = document.querySelector('.user-avatar');
@@ -29,15 +30,26 @@ const $chartReach = document.querySelector('.chart .reach');
 const $chartMilestone = document.querySelector('.chart .milestone');
 const $buttonOpenStats = document.querySelector('.open-stats');
 const $buttonRefreshStats = document.querySelector('.refresh-stats');
+const $downloadLink = document.createElement('a');
 
 const AVATAR_URL = 'https://cdn-images-1.medium.com/fit/c/64/64/';
 const MILESTONES = generateMilestones();
 
 let data;
+let accoundData;
 
 $year.textContent = (new Date()).getFullYear();
 $version.textContent = 'v' + chrome.runtime.getManifest().version;
 $welcome.addEventListener('click', () => $userSelector.style.display = 'block');
+$screenshot.addEventListener('click', () =>
+  html2canvas(document.body, {
+    foreignObjectRendering: true,
+    allowTaint: true,
+    ignoreElements: ignoreScreenshotElement
+  }).then(canvas => {
+    repaintIgnoredScreenshotElements(canvas);
+    downloadCanvas(canvas);
+  }));
 $confetti.addEventListener('click', () => confetti($confetti)); // easter egg
 $buttonOpenStats.addEventListener('click', () => openStatsPage());
 $buttonRefreshStats.addEventListener('click', () => {
@@ -58,6 +70,7 @@ function init() {
 }
 
 function updateUI(account) {
+  accoundData = account;
   updateStatsTable('articles', account.totals.articles);
   updateStatsTable('responses', account.totals.responses);
   updateChart(account.totals, account.id);
@@ -167,6 +180,61 @@ function updateUserSelector(data) {
   `;
   Array.from(document.querySelectorAll('.user-selector div'))
     .forEach(n => n.addEventListener('click', () => updateAccount(n.getAttribute('data-id'))));
+}
+
+function ignoreScreenshotElement(element) {
+  const isIgnoredClass = ['info', 'refresh-stats', 'open-stats']
+    .some(ignoredClass => {
+      if (element && element.className && typeof element.className === 'string') {
+        return element.className.includes(ignoredClass);
+      } else {
+        return false;
+      }
+    });
+  const isIgnoredElement = element.nodeName === 'svg';
+  return isIgnoredClass || isIgnoredElement;
+}
+
+function repaintIgnoredScreenshotElements(canvas) {
+  const CIRCLE_START = -0.5 * Math.PI;
+  const { articles, responses } = accoundData.totals;
+  const reach = articles.views + responses.views;
+  const milestone = MILESTONES.find(m => m > reach);
+  const milestonePrev = MILESTONES[MILESTONES.indexOf(milestone) - 1];
+  const milestoneDiff = milestone - milestonePrev;
+  const progress = milestoneDiff === 0 ? 0 : ((reach - milestonePrev) / milestoneDiff);
+  const ctx = canvas.getContext("2d");
+  ctx.beginPath();
+  ctx.arc(393, 250, 120, 0, 2 * Math.PI);
+  ctx.lineWidth = 15;
+  ctx.strokeStyle = '#eee';
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(393, 250, 120, CIRCLE_START, (2 * Math.PI * progress) + CIRCLE_START);
+  ctx.lineCap = 'round';
+  ctx.strokeStyle = '#03a87c';
+  ctx.stroke();
+
+  ctx.font = "17px sans-serif";
+  ctx.fillStyle = "#aaa";
+  ctx.textAlign = "center";
+  ctx.fillText("TOTAL REACH", canvas.width/2, 210);
+  ctx.fillText("NEXT MILESTONE", canvas.width/2, 300);
+
+  ctx.fillStyle = "#03a87c";
+  ctx.font = "bold 50px sans-serif";
+  ctx.fillText(formatValue(reach), canvas.width/2, 255);
+
+  ctx.fillStyle = "#000";
+  ctx.font = "22px sans-serif";
+  ctx.fillText(formatWholeNumber(milestone), canvas.width/2, 325);
+}
+
+function downloadCanvas(canvas) {
+  const accountName = accoundData.name.toLowerCase().replace(' ', '-');
+  $downloadLink.download = `medium-enhanced-stats-${accountName}.png`;
+  $downloadLink.href = canvas.toDataURL('image/png');
+  $downloadLink.click();
 }
 
 function formatValue(number = 0) {
