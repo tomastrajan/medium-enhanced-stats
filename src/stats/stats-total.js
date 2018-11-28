@@ -332,5 +332,5 @@ function generateDateIds() {
 }
 
 function log(...args) {
-  console.log('Medium Enhanced Stats -', ...args);
+  console.log('Medium Enhanced Stats [stats] -', ...args);
 }

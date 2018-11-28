@@ -22,6 +22,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (type === 'GET_POST_STATS') {
     handleGetPostStats(postId).then(sendResponse);
   }
+  if (type === 'GET_NOTIFICATIONS') {
+    handleGetNotifications().then(sendResponse);
+  }
 
   return true; // enable async sendResponse
 });
@@ -80,6 +83,13 @@ function handleGetTotals() {
 function handleGetPostStats(postId) {
   return request(`${API_URL}/stats/${postId}/0/${Date.now()}`)
     .then(calculatePostStats);
+}
+
+function handleGetNotifications() {
+  return Promise.all([
+    request(`${API_URL}/_/activity-status`),
+    request(`${API_URL}/me/activity?limit=100`)
+  ]);
 }
 
 function request(url) {
