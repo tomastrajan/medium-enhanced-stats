@@ -4,14 +4,14 @@ loggly.push({
   tag: 'mes-notifications'
 });
 
-loadData().then(data => console.log(data));
+loadNotificationData().then(data => logNotifications(data));
 
-function loadData() {
-  log('load data');
+function loadNotificationData() {
+  logNotifications('load data');
   return new Promise((resolve) =>
     chrome.runtime.sendMessage({ type: 'GET_NOTIFICATIONS'}, {}, data => resolve(data)));
 }
 
-function log(...args) {
+function logNotifications(...args) {
   console.log('Medium Enhanced Stats [notifications] -', ...args);
 }
