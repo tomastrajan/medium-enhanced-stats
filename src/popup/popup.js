@@ -43,6 +43,8 @@ $version.textContent = 'v' + chrome.runtime.getManifest().version;
 $welcome.addEventListener('click', () => $userSelector.style.display = 'block');
 $screenshot.addEventListener('click', () =>
   html2canvas(document.body, {
+    height: 400,
+    width: 450,
     foreignObjectRendering: true,
     allowTaint: true,
     ignoreElements: ignoreScreenshotElement
