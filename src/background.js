@@ -89,7 +89,26 @@ function handleGetNotifications() {
   return Promise.all([
     request(`${API_URL}/_/activity-status`),
     request(`${API_URL}/me/activity?limit=100`)
-  ]);
+  ]).then(([status, activity])=> {
+    const TYPES = {
+      post_recommended: 'fan',
+      post_recommended_rollup: 'fan',
+      response_created: 'response',
+      users_following_you_rollup: 'follower',
+      quote: 'highlight',
+      quote_rollup: 'highlight',
+      mention_in_post: 'mention',
+      note_replied: 'note-reply',
+      post_noted: 'note',
+    };
+    const count = status.value.unreadActivityCount;
+    return activity.value.slice(0, count).reduce((result, item) => {
+      const type = TYPES[item.activityType];
+      const count = item.rollupItems ? item.rollupItems.length : 1;
+      result[type] = result[type] ? result[type] += count : count;
+      return result;
+    }, {});
+  });
 }
 
 function request(url) {
