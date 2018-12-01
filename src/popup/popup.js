@@ -205,30 +205,35 @@ function repaintIgnoredScreenshotElements(canvas) {
   const milestoneDiff = milestone - milestonePrev;
   const progress = milestoneDiff === 0 ? 0 : ((reach - milestonePrev) / milestoneDiff);
   const ctx = canvas.getContext("2d");
+  const scale = window.devicePixelRatio;
+  const fontSizeSmall =  12 * scale;
+  const fontSizeMedium =  16 * scale;
+  const fontSizeBig =  32 * scale;
   ctx.beginPath();
-  ctx.arc(393, 250, 120, 0, 2 * Math.PI);
-  ctx.lineWidth = 15;
+  ctx.arc(225 * scale, 150 * scale, 80 * scale, 0, 2 * Math.PI);
+  ctx.lineWidth = 10 * scale;
   ctx.strokeStyle = '#eee';
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(393, 250, 120, CIRCLE_START, (2 * Math.PI * progress) + CIRCLE_START);
+  ctx.arc(225 * scale, 150 * scale, 80 * scale, CIRCLE_START, (2 * Math.PI * progress) + CIRCLE_START);
   ctx.lineCap = 'round';
   ctx.strokeStyle = '#03a87c';
   ctx.stroke();
 
-  ctx.font = "17px sans-serif";
+
+  ctx.font = `${fontSizeSmall}px sans-serif`;
   ctx.fillStyle = "#aaa";
   ctx.textAlign = "center";
-  ctx.fillText("TOTAL REACH", canvas.width/2, 210);
-  ctx.fillText("NEXT MILESTONE", canvas.width/2, 300);
+  ctx.fillText("TOTAL REACH", canvas.width/2, 120 * scale);
+  ctx.fillText("NEXT MILESTONE", canvas.width/2, 180 * scale);
 
   ctx.fillStyle = "#03a87c";
-  ctx.font = "bold 50px sans-serif";
-  ctx.fillText(formatValue(reach), canvas.width/2, 255);
+  ctx.font = `bold ${fontSizeBig}px sans-serif`;
+  ctx.fillText(formatValue(reach), canvas.width/2, 150 * scale);
 
   ctx.fillStyle = "#000";
-  ctx.font = "22px sans-serif";
-  ctx.fillText(formatWholeNumber(milestone), canvas.width/2, 325);
+  ctx.font = `${fontSizeMedium}px sans-serif`;
+  ctx.fillText(formatWholeNumber(milestone), canvas.width/2, 200 * scale);
 }
 
 function downloadCanvas(canvas) {
