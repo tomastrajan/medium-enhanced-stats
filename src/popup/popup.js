@@ -46,7 +46,6 @@ $screenshot.addEventListener('click', () =>
     height: 400,
     width: 450,
     foreignObjectRendering: true,
-    allowTaint: true,
     ignoreElements: ignoreScreenshotElement
   }).then(canvas => {
     repaintIgnoredScreenshotElements(canvas);
