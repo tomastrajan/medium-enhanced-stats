@@ -81,15 +81,21 @@ function handleGetTotals() {
 }
 
 function handleGetPostStats(postId) {
+  timer('post-stats');
   return request(`${API_URL}/stats/${postId}/0/${Date.now()}`)
-    .then(calculatePostStats);
+    .then(data => {
+      perf.push({ time: timer('post-stats'), type: 'request-post-stats' });
+      return calculatePostStats(data);
+    });
 }
 
 function handleGetNotifications() {
+  timer('notifications');
   return Promise.all([
     request(`${API_URL}/_/activity-status`),
     request(`${API_URL}/me/activity?limit=100`)
   ]).then(([status, activity])=> {
+    perf.push({ time: timer('notifications'), type: 'request-notifications' });
     const TYPES = {
       post_recommended: 'fan',
       post_recommended_rollup: 'fan',
