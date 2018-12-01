@@ -98,12 +98,12 @@ function handleGetNotifications() {
       quote: 'highlight',
       quote_rollup: 'highlight',
       mention_in_post: 'mention',
-      note_replied: 'note-reply',
+      note_replied: 'note',
       post_noted: 'note',
     };
     const count = status.value.unreadActivityCount;
     return activity.value.slice(0, count).reduce((result, item) => {
-      const type = TYPES[item.activityType];
+      const type = TYPES[item.activityType] || 'unknown';
       const count = item.rollupItems ? item.rollupItems.length : 1;
       result[type] = result[type] ? result[type] += count : count;
       return result;
