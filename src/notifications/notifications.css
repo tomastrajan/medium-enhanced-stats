@@ -11,6 +11,7 @@
     font-size: 14px;
     width: 120px;
     pointer-events: none;
+    z-index: 100;
 }
 
 .notifications-extras.show {

@@ -4,44 +4,63 @@ loggly.push({
   tag: 'mes-notifications'
 });
 
-const $notificationExtrasHolder = document.querySelector('.metabar-block .buttonSet');
-let $notificationExtras = document.querySelector('.notifications-extras');
+let $notificationExtrasHolder;
+let $notificationExtras;
 
-if (!$notificationExtras) {
-  const notificationExtras = document.createElement('div');
-  notificationExtras.className = 'notifications-extras';
-  $notificationExtrasHolder.appendChild(notificationExtras);
-  $notificationExtras = document.querySelector('.notifications-extras');
+timer(0, 10000)
+  .subscribe(() => {
+    if ($notificationExtrasHolder) {
+      $notificationExtrasHolder.removeEventListener('mouseenter', showNotifications);
+      $notificationExtrasHolder.removeEventListener('mouseleave', hideNotifications);
+      $notificationExtrasHolder.removeEventListener('click', loadNotificationDataAndUpdateDom);
+    }
+
+    $notificationExtrasHolder = document.querySelector('.metabar-block .buttonSet');
+    $notificationExtras = document.querySelector('.notifications-extras');
+
+    if (!$notificationExtras && $notificationExtrasHolder) {
+      const notificationExtras = document.createElement('div');
+      notificationExtras.className = 'notifications-extras';
+      $notificationExtrasHolder.appendChild(notificationExtras);
+      $notificationExtras = document.querySelector('.notifications-extras');
+    }
+
+    if ($notificationExtrasHolder) {
+      $notificationExtrasHolder.addEventListener('mouseenter', showNotifications);
+      $notificationExtrasHolder.addEventListener('mouseleave', hideNotifications);
+      $notificationExtrasHolder.addEventListener('click', loadNotificationDataAndUpdateDom);
+    }
+  });
+
+timer(0, 60000).subscribe(() => loadNotificationDataAndUpdateDom());
+
+function showNotifications() {
+  $notificationExtras.classList.add('show')
 }
 
-$notificationExtrasHolder.addEventListener('mouseenter',
-  () => $notificationExtras.classList.add('show'));
-$notificationExtrasHolder.addEventListener('mouseleave',
-  () => $notificationExtras.classList.remove('show'));
-$notificationExtrasHolder.addEventListener('click',
-  () => loadNotificationData().then(updateNotificationsDom));
+function hideNotifications() {
+  $notificationExtras.classList.remove('show')
+}
 
-timer(0, 60000)
-  .subscribe(() => loadNotificationData().then(updateNotificationsDom));
-
-function loadNotificationData() {
+function loadNotificationDataAndUpdateDom() {
   logNotifications('load data');
   return new Promise((resolve) =>
-    chrome.runtime.sendMessage({ type: 'GET_NOTIFICATIONS'}, {}, resolve));
-}
-
-function updateNotificationsDom(notifications) {
-  const content = Object.keys(notifications).sort().map(key => {
-    const count = notifications[key];
-    return `
+    chrome.runtime.sendMessage({ type: 'GET_NOTIFICATIONS'}, {}, resolve))
+    .then(notifications => {
+      const content = Object.keys(notifications).sort().map(key => {
+        const count = notifications[key];
+        return `
           <div>
             <span class="value">${count}</span>
             <span class="type">${capitalize(key)}${count > 1 ? 's' : ''}</span>
           </div>  
         `;
-  }).join('\n') || 'No new notifications';
-  $notificationExtras.innerHTML = `<div class="triangle"></div>${content}`;
-  logNotifications('notifications DOM updated')
+      }).join('\n') || 'No new notifications';
+      if ($notificationExtras) {
+        $notificationExtras.innerHTML = `<div class="triangle"></div>${content}`;
+        logNotifications('notifications DOM updated')
+      }
+    });
 }
 
 function capitalize(value) {
