@@ -4,35 +4,48 @@ loggly.push({
   tag: 'mes-notifications'
 });
 
-let $notificationExtrasHolder;
+let $notificationHolder;
+let $notificationButton;
 let $notificationExtras;
 
-timer(0, 10000)
+// TODO: use MutationObserver https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver
+
+timer(0, 5000)
   .subscribe(() => {
-    if ($notificationExtrasHolder) {
-      $notificationExtrasHolder.removeEventListener('mouseenter', showNotifications);
-      $notificationExtrasHolder.removeEventListener('mouseleave', hideNotifications);
-      $notificationExtrasHolder.removeEventListener('click', loadNotificationDataAndUpdateDom);
+    if ($notificationHolder) {
+      $notificationHolder.removeEventListener('mouseenter', showNotifications);
+      $notificationHolder.removeEventListener('mouseleave', hideNotifications);
+      $notificationHolder.removeEventListener('click', loadNotificationDataAndUpdateDom);
     }
 
-    $notificationExtrasHolder = document.querySelector('.metabar-block .buttonSet');
+    $notificationHolder = document.querySelector('.metabar-block .buttonSet');
+    $notificationButton = document.querySelector('.metabar-block button[title="Notifications"]');
     $notificationExtras = document.querySelector('.notifications-extras');
 
-    if (!$notificationExtras && $notificationExtrasHolder) {
+    if (!$notificationExtras && $notificationHolder) {
       const notificationExtras = document.createElement('div');
       notificationExtras.className = 'notifications-extras';
-      $notificationExtrasHolder.appendChild(notificationExtras);
+      $notificationHolder.appendChild(notificationExtras);
       $notificationExtras = document.querySelector('.notifications-extras');
+      loadNotificationDataAndUpdateDom();
     }
 
-    if ($notificationExtrasHolder) {
-      $notificationExtrasHolder.addEventListener('mouseenter', showNotifications);
-      $notificationExtrasHolder.addEventListener('mouseleave', hideNotifications);
-      $notificationExtrasHolder.addEventListener('click', loadNotificationDataAndUpdateDom);
+    if ($notificationHolder) {
+      $notificationHolder.addEventListener('mouseenter', showNotifications);
+      $notificationHolder.addEventListener('mouseleave', hideNotifications);
+      $notificationHolder.addEventListener('click', loadNotificationDataAndUpdateDom);
     }
   });
 
 timer(0, 60000).subscribe(() => loadNotificationDataAndUpdateDom());
+
+fromEvent(window, 'resize')
+  .pipe(debounceTime(500))
+  .subscribe(updateNotificationExtraLeftPosition);
+
+function updateNotificationExtraLeftPosition() {
+  $notificationExtras.style.left = `${$notificationButton.offsetLeft - 66}px`;
+}
 
 function showNotifications() {
   $notificationExtras.classList.add('show')
