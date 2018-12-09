@@ -101,6 +101,7 @@ function handleGetNotifications() {
       post_recommended_rollup: 'fan',
       response_created: 'response',
       users_following_you_rollup: 'follower',
+      users_following_you: 'follower',
       quote: 'highlight',
       quote_rollup: 'highlight',
       mention_in_post: 'mention',
