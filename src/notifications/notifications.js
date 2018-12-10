@@ -55,6 +55,7 @@ function initNotifications() {
   }
 
   loadNotificationDataAndUpdateDom();
+  updateNotificationExtraLeftPosition();
 }
 
 function rebindNotificationsButtonEvents() {

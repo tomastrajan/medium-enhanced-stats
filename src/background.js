@@ -93,7 +93,7 @@ function handleGetNotifications() {
   timer('notifications');
   return Promise.all([
     request(`${API_URL}/_/activity-status`),
-    request(`${API_URL}/me/activity?limit=100`)
+    request(`${API_URL}/me/activity?limit=50`)
   ]).then(([status, activity])=> {
     perf.push({ time: timer('notifications'), type: 'request-notifications' });
     const TYPES = {
