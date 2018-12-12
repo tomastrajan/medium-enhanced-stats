@@ -100,6 +100,7 @@ function handleGetNotifications() {
       post_recommended: 'fan',
       post_recommended_rollup: 'fan',
       response_created: 'response',
+      post_recommended_milestone: 'milestone reached',
       users_following_you_rollup: 'follower',
       users_following_you: 'follower',
       quote: 'highlight',
