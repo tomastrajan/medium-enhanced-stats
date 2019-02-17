@@ -180,7 +180,7 @@ function updateBarChart(data) {
 }
 
 function updateTableSummary(data) {
-  const { items, views, syndicatedViews, reads, fans, claps, clapsPerFan, ratio } = data;
+  const { items, views, syndicatedViews, reads, fans, claps, clapsPerFan, clapsPerViewsRatio, fansPerReadsRatio, ratio } = data;
   log('update table summary');
   const table = document.querySelector('table');
   let tfoot = table.querySelector('tfoot');
@@ -202,6 +202,8 @@ function updateTableSummary(data) {
             <span class="claps" title="${formatWholeNumber(claps)}">
                 ${formatValue(claps)}
                 <span class="claps-per-fan" title="Claps per Fan">${clapsPerFan}</span>
+                <span class="claps-per-views-ratio" title="Claps per View Ratio">${clapsPerViewsRatio}%</span>
+                <span class="fans-per-reads-ratio" title="Fans per Reads Ratio">${fansPerReadsRatio}%</span>
             </span>
         </td>
       </tr>
@@ -228,10 +230,12 @@ function updateTableRows(data) {
       if (post) {
         const clapsPerFan = post.upvotes === 0 ? 0 : (post.claps / post.upvotes).toFixed(2);
         const clapsPerViewsRatio = post.upvotes === 0 ? 0 : ((post.claps / post.views) * 100).toFixed(1);
+        const fansPerReadsRatio = post.upvotes === 0 ? 0 : ((post.upvotes / post.reads) * 100).toFixed(1);
         claps.innerHTML = `
           <span title="${formatWholeNumber(post.claps)}">${formatValue(post.claps)}</span>
           <span class="claps-per-fan" title="Claps per Fan">${clapsPerFan}</span>
           <span class="claps-per-views-ratio" title="Claps per Views Ratio">${clapsPerViewsRatio}%</span>
+          <span class="fans-per-reads-ratio" title="Fans Per Reads Ratio">${fansPerReadsRatio}%</span>
         `;
       }
       const postTitleCell = row.querySelector('td:first-child');

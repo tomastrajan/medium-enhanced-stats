@@ -34,6 +34,15 @@ table .claps .claps-per-views-ratio {
     color: rgba(0, 0, 0, 0.54);
 }
 
+table .claps .fans-per-reads-ratio {
+    position: absolute;
+    top: -17px;
+    right: 75px;
+    font-size: 55%;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.54);
+}
+
 tfoot td {
     margin: 20px 0 0 0 !important;
     border-top: 3px solid #333 !important;
@@ -53,6 +62,24 @@ tfoot .claps .claps-per-fan {
     position: absolute;
     top: 30px;
     right: 0;
+    font-size: 60%;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+tfoot .claps .claps-per-views-ratio {
+    position: absolute;
+    top: -20px;
+    right: 0;
+    font-size: 60%;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.54);
+}
+
+tfoot .claps .fans-per-reads-ratio {
+    position: absolute;
+    top: -20px;
+    right: 80px;
     font-size: 60%;
     font-weight: normal;
     color: rgba(0, 0, 0, 0.54);
