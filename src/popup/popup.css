@@ -150,14 +150,19 @@ a:hover {
     position: relative;
 }
 
-.actions .open-stats {
+.actions .side-actions {
     flex: 1 1 auto;
     margin: 0 10px 0 0;
 }
 
-.actions .refresh-stats {
-    flex: 1 1 auto;
+.actions .side-actions-right {
     margin: 0 0 0 10px;
+}
+
+.actions .side-actions button {
+    display: block;
+    width: 100%;
+    margin: 5px 0;
 }
 
 .actions .confetti {
@@ -432,19 +437,8 @@ footer a img {
 
 footer .version {
     position: absolute;
-    right: 45px;
-    top:16px;
-}
-
-footer .screenshot {
-    position: absolute;
     right: 20px;
     top:16px;
-    cursor: pointer;
-}
-
-footer .screenshot:hover {
-    color: var(--color-brand);
 }
 
 footer .support {
@@ -466,7 +460,7 @@ footer .support {
     display: block;
 }
 
-.loading .screenshot {
+.loading .screenshot-stats {
     pointer-events: none;
     color: var(--color-grey-lighter);
 }

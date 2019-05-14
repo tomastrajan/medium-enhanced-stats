@@ -14,7 +14,10 @@ const mesUrlChange$ = timer(0, 1000)
   .pipe(
     map(() => window.location.href),
     filter(currentUrl => currentUrl !== mesUrl),
-    tap(currentUrl => mesUrl = currentUrl)
+    tap(currentUrl => {
+      console.log(currentUrl);
+      mesUrl = currentUrl;
+    })
   );
 
 mesUrlChange$.subscribe(initNotifications);

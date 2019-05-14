@@ -52,6 +52,7 @@ function handleGetTotals() {
         .then(followers => ([articles, responses, followers]))
     })
     .then(([articles, responses, followers]) => {
+      console.log(articles, responses);
       perf.push({ time: timer('followers'), type: 'request-followers' });
       const user = getUser(articles);
       user.id = user.userId;
@@ -61,6 +62,10 @@ function handleGetTotals() {
       user.totals = {
         articles: calculateTotals(articles),
         responses: calculateTotals(responses)
+      };
+      user.export = {
+        articles: articles.value,
+        responses: responses.value
       };
       const collections = getCollections(articles);
       timer('collections');

@@ -9,7 +9,6 @@ const $body = document.querySelector('body');
 const $table = document.querySelector('table');
 const $year = document.querySelector('.year');
 const $version = document.querySelector('.version');
-const $screenshot = document.querySelector('.screenshot');
 const $welcome = document.querySelector('.welcome');
 const $user = document.querySelector('.user');
 const $userAvatar = document.querySelector('.user-avatar');
@@ -30,6 +29,8 @@ const $chartReach = document.querySelector('.chart .reach');
 const $chartMilestone = document.querySelector('.chart .milestone');
 const $buttonOpenStats = document.querySelector('.open-stats');
 const $buttonRefreshStats = document.querySelector('.refresh-stats');
+const $buttonScreenshot = document.querySelector('.screenshot-stats');
+const $buttonExport = document.querySelector('.export-stats');
 const $downloadLink = document.createElement('a');
 
 const AVATAR_URL = 'https://cdn-images-1.medium.com/fit/c/64/64/';
@@ -41,7 +42,7 @@ let accoundData;
 $year.textContent = (new Date()).getFullYear();
 $version.textContent = 'v' + chrome.runtime.getManifest().version;
 $welcome.addEventListener('click', () => $userSelector.style.display = 'block');
-$screenshot.addEventListener('click', () =>
+$buttonScreenshot.addEventListener('click', () =>
   html2canvas(document.body, {
     scale: window.devicePixelRatio,
     height: 400,
@@ -53,6 +54,7 @@ $screenshot.addEventListener('click', () =>
     downloadCanvas(canvas);
   }));
 $confetti.addEventListener('click', () => confetti($confetti)); // easter egg
+$buttonExport.addEventListener('click', () => exportStats());
 $buttonOpenStats.addEventListener('click', () => openStatsPage());
 $buttonRefreshStats.addEventListener('click', () => {
   init();
@@ -185,7 +187,7 @@ function updateUserSelector(data) {
 }
 
 function ignoreScreenshotElement(element) {
-  const isIgnoredClass = ['info', 'refresh-stats', 'open-stats']
+  const isIgnoredClass = ['info', 'side-actions']
     .some(ignoredClass => {
       if (element && element.className && typeof element.className === 'string') {
         return element.className.includes(ignoredClass);
@@ -241,6 +243,32 @@ function downloadCanvas(canvas) {
   const accountName = accoundData.name.toLowerCase().replace(' ', '-');
   $downloadLink.download = `medium-enhanced-stats-${accountName}.png`;
   $downloadLink.href = canvas.toDataURL('image/png');
+  $downloadLink.click();
+}
+
+function exportStats() {
+  const accountName = accoundData.name.toLowerCase().replace(' ', '-');
+  const props = [
+    'postId',
+    'title',
+    'slug',
+    'firstPublishedAt',
+    'readingTime',
+    'views',
+    'reads',
+    'upvotes',
+    'claps'
+  ];
+  const csv = [
+    props.join(';'),
+    ...data.user.export.articles.map(article => props.map(prop => article[prop]).join(';')),
+    '',
+    ...data.user.export.responses.map(article => props.map(prop => article[prop]).join(';'))
+  ].join('\n');
+  const encodedUri = encodeURI(`data:text/csv;charset=utf-8,\uFEFF${csv}`);
+
+  $downloadLink.href = encodedUri;
+  $downloadLink.download = `medium-enhanced-stats-${accountName}.csv`;
   $downloadLink.click();
 }
 

@@ -25,9 +25,14 @@
                 </span>
             </h1>
             <div class="actions">
-                <button class="open-stats" title="Open Medium stats">
-                    <i class="fas fa-external-link-alt"></i>
-                </button>
+                <div class="side-actions">
+                    <button class="open-stats" title="Open Medium stats">
+                        <i class="fas fa-external-link-alt"></i>
+                    </button>
+                    <button class="outline refresh-stats" title="Refresh stats">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
                 <svg viewbox="0 0 36 36" class="chart">
                     <path class="circle-bg"
                           d="M18 2.0845
@@ -50,9 +55,14 @@
                     <text x="18" y="24" class="chart-label label">NEXT MILESTONE</text>
                     <text x="18" y="27.5" class="chart-label milestone"></text>
                 </svg>
-                <button class="outline refresh-stats" title="Refresh stats">
-                    <i class="fas fa-sync-alt"></i>
-                </button>
+                <div class="side-actions side-actions-right">
+                    <button class="screenshot-stats" title="Download as an image">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <button class="outline export-stats" title="Export stats as csv">
+                        <i class="fas fa-download"></i>
+                    </button>
+                </div>
                 <div class="confetti"></div>
                 <div class="milestone-reached-value">
                     <span class="value odometer">0</span>
@@ -112,9 +122,6 @@
             <a href="https://www.twitter.com/@tomastrajan" target="_blank">
                 <img src="twitter.png" alt="Twitter"> @tomastrajan
             </a>
-            <span class="screenshot" title="Download as an image">
-                <i class=" fas fa-camera fa-lg"></i>
-            </span>
             <span class="version"></span>
         </footer>
     </body>
