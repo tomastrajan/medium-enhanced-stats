@@ -460,9 +460,14 @@ footer .support {
     display: block;
 }
 
-.loading .screenshot-stats {
+.loading .screenshot-stats,
+.loading .export-stats {
     pointer-events: none;
     color: var(--color-grey-lighter);
+    border-color: var(--color-grey-lighter);
+}
+.loading .screenshot-stats {
+    background-color: var(--color-grey);
 }
 
 .milestone-reached .chart-label {
