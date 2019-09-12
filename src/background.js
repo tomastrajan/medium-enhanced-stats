@@ -39,11 +39,29 @@ chrome.runtime.onInstalled.addListener(details => {
   }
 });
 
+function getTotals(url, payload) {
+  let finalUrl = `${API_URL}${url}?limit=1000`;
+  if (!payload) {
+    return request(finalUrl).then(res => getTotals(url, res));
+  }
+  const { value, paging } = payload;
+  if (payload && paging && paging.next && paging.next.to && value && value.length) {
+    finalUrl += `&to=${paging.next.to}`;
+    return request(finalUrl).then(res => {
+      payload.value = [...payload.value, ...res.value];
+      payload.paging = res.paging;
+      return getTotals(url, payload);
+    });
+  } else {
+    return Promise.resolve(payload);
+  }
+}
+
 function handleGetTotals() {
   timer('user');
   return Promise.all([
-      request(`${API_URL}/me/stats?limit=100000`),
-      request(`${API_URL}/me/stats/responses?limit=100000`)
+      getTotals('/me/stats'),
+      getTotals('/me/stats/responses'),
     ])
     .then(([articles, responses]) => {
       perf.push({ time: timer('user'), type: 'request-user' });
@@ -69,7 +87,7 @@ function handleGetTotals() {
       };
       const collections = getCollections(articles);
       timer('collections');
-      return Promise.all(collections.map(c => request(`${API_URL}/${c.slug}/stats?limit=100000`)))
+      return Promise.all(collections.map(c => getTotals(`/${c.slug}/stats`)))
         .then(collectionsStats => {
           collections.forEach((c, index) => {
             c.followers = c.metadata.followerCount;
