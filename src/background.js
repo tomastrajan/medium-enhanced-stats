@@ -66,8 +66,9 @@ function handleGetTotals() {
     .then(([articles, responses]) => {
       perf.push({ time: timer('user'), type: 'request-user' });
       timer('followers');
-      return request(`${API_URL}/@${getUser(articles).username}/followers`)
-        .then(followers => ([articles, responses, followers]))
+      // return request(`${API_URL}/@${getUser(articles).username}/followers`)
+      //   .then(followers => ([articles, responses, followers]))
+      return [articles, responses, {}]
     })
     .then(([articles, responses, followers]) => {
       console.log(articles, responses);
@@ -145,7 +146,11 @@ function handleGetNotifications() {
 function request(url) {
   return fetch(url, { credentials: "same-origin", headers: { accept: 'application/json' } })
     .then(res => res.text())
-    .then(text => JSON.parse(text.slice(16)).payload)
+    .then(text => {
+      console.log(text.slice(16, 100));
+      return JSON.parse(text.slice(16)).payload
+    })
+
 }
 
 function getUser(data) {
@@ -159,7 +164,7 @@ function getCollections(data) {
 }
 
 function getFollowers(data) {
-  const followers = data && data.references && data.references.SocialStats;
+  const followers = data && data.references && data.references.SocialStats || {};
   return (Object.values(followers)[0] || {}).usersFollowedByCount;
 }
 
