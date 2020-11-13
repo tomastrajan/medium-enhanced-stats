@@ -139,8 +139,8 @@ function handleGetNotifications() {
       note_replied: 'note',
       post_noted: 'note',
     };
-    console.log('xxx', status, activity);
-    return activity.value.slice(0, count).reduce((result, item) => {
+    const count = status.unreadActivityCount;
+    return (activity && activity.value || []).slice(0, count).reduce((result, item) => {
       const type = TYPES[item.activityType] || 'unknown';
       const count = item.rollupItems ? item.rollupItems.length : 1;
       result[type] = result[type] ? (result[type] += count) : count;
