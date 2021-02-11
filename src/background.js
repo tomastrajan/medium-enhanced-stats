@@ -22,6 +22,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (type === 'GET_POST_STATS') {
     handleGetPostStats(postId).then(sendResponse);
   }
+
+  if (type === 'GET_POST_STATS_TODAY') {
+    console.log("GET_POST_STATS_TODAY");
+    handleGetPostStatsToday(postId).then(sendResponse);
+  }
+
   if (type === 'GET_NOTIFICATIONS') {
     handleGetNotifications().then(sendResponse);
   }
@@ -112,6 +118,19 @@ function handleGetTotals() {
 }
 
 function handleGetPostStats(postId) {
+  timer('post-stats');
+  return request(`${API_URL}/stats/${postId}/0/${Date.now()}`).then((data) => {
+    perf.push({ time: timer('post-stats'), type: 'request-post-stats' });
+    return calculatePostStats(data);
+  });
+}
+
+function handleGetPostStatsToday() {
+  // return request(`${API_URL}/stats/${postId}/${Date.now() - 864e5}/${Date.now()}`).then((data) => {
+  //   console.log("data handleGetPostStatsToday", data);
+  //   perf.push({ time: timer('post-stats-today'), type: 'request-post-stats' });
+  //   return calculatePostStats(data);
+  // });
   timer('post-stats');
   return request(`${API_URL}/stats/${postId}/0/${Date.now()}`).then((data) => {
     perf.push({ time: timer('post-stats'), type: 'request-post-stats' });
@@ -234,16 +253,35 @@ function calculateTotals(data) {
   return totals;
 }
 
+function isDateToday(date) {
+  const date_today = new Date();
+  if (date.getFullYear() != date_today.getFullYear()){
+    return false;
+  }
+  if (date.getMonth() != date_today.getMonth()){
+    return false;
+  }
+  if (date.getDate() != date_today.getDate()){
+    return false;
+  }
+  return true;
+}
+
 function calculatePostStats(data) {
   const stats = (data && data.value) || [];
+  console.log("most important stat**********", stats);
   return stats.reduce((result, item) => {
     const date = new Date(item.collectedAt);
     const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-    result[key] = result[key] || { views: 0, reads: 0, fans: 0, claps: 0 };
+    result[key] = result[key] || { views: 0, reads: 0, fans: 0, claps: 0, read_today: 0, view_today: 0 };
     result[key].views += item.views;
     result[key].reads += item.reads;
     result[key].fans += item.upvotes;
     result[key].claps += item.claps;
+    if (isDateToday(date)) {
+      result[key].read_today += item.reads;
+      result[key].view_today += item.views;
+    }
     return result;
   }, {});
 }
