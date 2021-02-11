@@ -224,7 +224,6 @@ function getAllPostStats(posts) {
     let promiseArr = [];
     posts.forEach((post) => {
         promiseArr.push(loadPostStatsToday(post.postId));
-        //promiseArr.push(loadPostStats(post.postId));
     });
     Promise.all(promiseArr).then((result)=>{
        for(let i = 0; i < result.length; i++) {
@@ -318,7 +317,6 @@ function updateTableRows(data) {
              .resolve()
              .then(() => barChartPostsStats[postId] || loadPostStats(postId))
              .then(postStats => {
-                 console.log("is coming here", postStats);
                barChartPostsStats[postId] = postStats;
                const dateId = Object.keys(postStats)[0];
                let dateIds = getDateIds();
@@ -341,7 +339,6 @@ function updateTableRows(data) {
              .resolve()
              .then(() => barChartPostsStats[postId] || loadPostStats(postId))
              .then(postStats => {
-                 console.log("postStats neel", postStats);
                barChartPostsStats.id = postId;
                barChartPostsStats[postId] = postStats;
                barChartRefreshTrigger.next();

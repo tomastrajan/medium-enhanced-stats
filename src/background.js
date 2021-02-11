@@ -23,11 +23,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     handleGetPostStats(postId).then(sendResponse);
   }
 
-  if (type === 'GET_POST_STATS_TODAY') {
-    console.log("GET_POST_STATS_TODAY");
-    handleGetPostStatsToday(postId).then(sendResponse);
-  }
-
   if (type === 'GET_NOTIFICATIONS') {
     handleGetNotifications().then(sendResponse);
   }
@@ -118,19 +113,6 @@ function handleGetTotals() {
 }
 
 function handleGetPostStats(postId) {
-  timer('post-stats');
-  return request(`${API_URL}/stats/${postId}/0/${Date.now()}`).then((data) => {
-    perf.push({ time: timer('post-stats'), type: 'request-post-stats' });
-    return calculatePostStats(data);
-  });
-}
-
-function handleGetPostStatsToday() {
-  // return request(`${API_URL}/stats/${postId}/${Date.now() - 864e5}/${Date.now()}`).then((data) => {
-  //   console.log("data handleGetPostStatsToday", data);
-  //   perf.push({ time: timer('post-stats-today'), type: 'request-post-stats' });
-  //   return calculatePostStats(data);
-  // });
   timer('post-stats');
   return request(`${API_URL}/stats/${postId}/0/${Date.now()}`).then((data) => {
     perf.push({ time: timer('post-stats'), type: 'request-post-stats' });
@@ -269,7 +251,6 @@ function isDateToday(date) {
 
 function calculatePostStats(data) {
   const stats = (data && data.value) || [];
-  console.log("most important stat**********", stats);
   return stats.reduce((result, item) => {
     const date = new Date(item.collectedAt);
     const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
