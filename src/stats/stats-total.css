@@ -1,165 +1,183 @@
 .sortableTableWrapper th:last-child {
-    min-width: 130px !important;
+  min-width: 130px !important;
 }
 
 .sortableTableWrapper th:last-child button {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 table .claps {
-    position: relative;
-    display: inline-block;
-    width: 75px;
+  position: relative;
+  display: inline-block;
+  width: 75px;
 }
 
 table th .claps {
-    width: 70px;
+  width: 70px;
 }
 
-table .read_today {
-    position: relative;
-    display: inline-block;
-    width: 75px;
-}
-
-table th .read_today {
-    width: 70px;
+table th.today {
+  text-align: center;
 }
 
 table .claps .claps-per-fan {
-    position: absolute;
-    top: 28px;
-    right: 0;
-    font-size: 55%;
-    font-weight: normal;
-    color: rgba(0, 0, 0, 0.54);
+  position: absolute;
+  top: 28px;
+  right: 0;
+  font-size: 55%;
+  font-weight: normal;
+  color: rgba(0, 0, 0, 0.54);
 }
 
 table .claps .claps-per-views-ratio {
-    position: absolute;
-    top: -17px;
-    right: 0;
-    font-size: 55%;
-    font-weight: normal;
-    color: rgba(0, 0, 0, 0.54);
+  position: absolute;
+  top: -17px;
+  right: 0;
+  font-size: 55%;
+  font-weight: normal;
+  color: rgba(0, 0, 0, 0.54);
 }
 
 table .claps .fans-per-reads-ratio {
-    position: absolute;
-    top: -17px;
-    right: 75px;
-    font-size: 55%;
-    font-weight: normal;
-    color: rgba(0, 0, 0, 0.54);
+  position: absolute;
+  top: -17px;
+  right: 75px;
+  font-size: 55%;
+  font-weight: normal;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+table tbody .today,
+table tfoot .today {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+}
+
+table tbody .today div,
+table tfoot .today div {
+  width: 70px;
+  height: 36px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+table tfoot .today div {
+  margin-top: -1px !important;
+  font-size: 20px !important;
 }
 
 tfoot td {
-    margin: 20px 0 0 0 !important;
-    border-top: 3px solid #333 !important;
-    text-align: right !important;
-    height: 62px;
-    font-size: 24px;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: visible;
+  margin: 20px 0 0 0 !important;
+  border-top: 3px solid #333 !important;
+  text-align: right !important;
+  height: 62px;
+  font-size: 24px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: visible;
 }
 
 tfoot .claps {
-    position: relative;
+  position: relative;
 }
 
 tfoot .claps .claps-per-fan {
-    position: absolute;
-    top: 30px;
-    right: 0;
-    font-size: 60%;
-    font-weight: normal;
-    color: rgba(0, 0, 0, 0.54);
+  position: absolute;
+  top: 30px;
+  right: 0;
+  font-size: 60%;
+  font-weight: normal;
+  color: rgba(0, 0, 0, 0.54);
 }
 
 tfoot .claps .claps-per-views-ratio {
-    position: absolute;
-    top: -20px;
-    right: 0;
-    font-size: 60%;
-    font-weight: normal;
-    color: rgba(0, 0, 0, 0.54);
+  position: absolute;
+  top: -20px;
+  right: 0;
+  font-size: 60%;
+  font-weight: normal;
+  color: rgba(0, 0, 0, 0.54);
 }
 
 tfoot .claps .fans-per-reads-ratio {
-    position: absolute;
-    top: -20px;
-    right: 80px;
-    font-size: 60%;
-    font-weight: normal;
-    color: rgba(0, 0, 0, 0.54);
+  position: absolute;
+  top: -20px;
+  right: 80px;
+  font-size: 60%;
+  font-weight: normal;
+  color: rgba(0, 0, 0, 0.54);
 }
 
 tfoot td.articles-count {
-    text-align: left !important;
+  text-align: left !important;
 }
 
 tfoot td .syndicated-views {
-    font-size: 70%;
-    font-weight: normal;
-    color: rgba(0, 0, 0, 0.54);
+  font-size: 70%;
+  font-weight: normal;
+  color: rgba(0, 0, 0, 0.54);
 }
 
 @media screen and (max-width: 991px) {
-    tbody .claps, tfoot .claps {
-        display: none;
-    }
+  tbody .claps,
+  tfoot .claps {
+    display: none;
+  }
 
-    tfoot td:first-child {
-        display: none;
-    }
+  tfoot td:first-child {
+    display: none;
+  }
 
-    tfoot td {
-        text-align: left !important;
-        padding: 30px 0 0 0 !important;
-    }
+  tfoot td {
+    text-align: left !important;
+    padding: 30px 0 0 0 !important;
+  }
 }
 
 @media screen and (max-width: 500px) {
-    tfoot td {
-        font-size: 15px;
-        font-weight: 700;
-    }
+  tfoot td {
+    font-size: 15px;
+    font-weight: 700;
+  }
 }
 
 .mes-barchart-extras div {
-    position: absolute;
-    border-radius: 50%;
-    border: solid rgba(0, 0, 0, 0.40);
-    background-color: #000;
-    background-clip: padding-box;
-    animation: appear 1s ease-in-out 1;
+  position: absolute;
+  border-radius: 50%;
+  border: solid rgba(0, 0, 0, 0.4);
+  background-color: #000;
+  background-clip: padding-box;
+  animation: appear 1s ease-in-out 1;
 }
 
 @keyframes appear {
-    0% {
-        opacity: 0;
-        transform: scale(3);
-    }
-    100% {
-        opacity: 1;
-        transform: scale(1);
-    }
+  0% {
+    opacity: 0;
+    transform: scale(3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .mes-action-show-in-chart {
-    color: rgba(0,0,0,.54) !important;
-    width: auto !important;
-    padding: 0 !important;
-    font-size: 16px !important;
-    font-weight: normal !important;
+  color: rgba(0, 0, 0, 0.54) !important;
+  width: auto !important;
+  padding: 0 !important;
+  font-size: 16px !important;
+  font-weight: normal !important;
 }
 
 .mes-action-show-in-chart:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
 .mes-post-bar {
-    fill: rgba(3, 159, 118, 0.9) !important;
+  fill: rgba(3, 159, 118, 0.9) !important;
 }
-

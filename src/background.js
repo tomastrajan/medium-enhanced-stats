@@ -23,6 +23,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     handleGetPostStats(postId).then(sendResponse);
   }
 
+  if (type === 'GET_POST_STATS_TODAY') {
+    handleGetPostStatsToday(postId).then(sendResponse);
+  }
+
   if (type === 'GET_NOTIFICATIONS') {
     handleGetNotifications().then(sendResponse);
   }
@@ -120,6 +124,24 @@ function handleGetPostStats(postId) {
   });
 }
 
+function handleGetPostStatsToday(postId) {
+  timer('post-stats-today');
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  console.log(
+    `${API_URL}/stats/${postId}/${todayStart.getTime()}/${Date.now()}`
+  );
+  return request(
+    `${API_URL}/stats/${postId}/${todayStart.getTime()}/${Date.now()}`
+  ).then((data) => {
+    perf.push({
+      time: timer('post-stats-today'),
+      type: 'request-post-stats-today',
+    });
+    return calculatePostStats(data);
+  });
+}
+
 function handleGetNotifications() {
   timer('notifications');
   return Promise.all([
@@ -141,12 +163,14 @@ function handleGetNotifications() {
       post_noted: 'note',
     };
     const count = status.unreadActivityCount;
-    return (activity && activity.value || []).slice(0, count).reduce((result, item) => {
-      const type = TYPES[item.activityType] || 'unknown';
-      const count = item.rollupItems ? item.rollupItems.length : 1;
-      result[type] = result[type] ? (result[type] += count) : count;
-      return result;
-    }, {});
+    return ((activity && activity.value) || [])
+      .slice(0, count)
+      .reduce((result, item) => {
+        const type = TYPES[item.activityType] || 'unknown';
+        const count = item.rollupItems ? item.rollupItems.length : 1;
+        result[type] = result[type] ? (result[type] += count) : count;
+        return result;
+      }, {});
   });
 }
 
@@ -186,7 +210,7 @@ function requestGraphQl(query) {
     credentials: 'same-origin',
     headers: {
       Accept: '*/*',
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(query),
   }).then((res) => res.json());
@@ -235,34 +259,16 @@ function calculateTotals(data) {
   return totals;
 }
 
-function isDateToday(date) {
-  const date_today = new Date();
-  if (date.getFullYear() != date_today.getFullYear()){
-    return false;
-  }
-  if (date.getMonth() != date_today.getMonth()){
-    return false;
-  }
-  if (date.getDate() != date_today.getDate()){
-    return false;
-  }
-  return true;
-}
-
 function calculatePostStats(data) {
   const stats = (data && data.value) || [];
   return stats.reduce((result, item) => {
     const date = new Date(item.collectedAt);
     const key = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-    result[key] = result[key] || { views: 0, reads: 0, fans: 0, claps: 0, read_today: 0, view_today: 0 };
+    result[key] = result[key] || { views: 0, reads: 0, fans: 0, claps: 0 };
     result[key].views += item.views;
     result[key].reads += item.reads;
     result[key].fans += item.upvotes;
     result[key].claps += item.claps;
-    if (isDateToday(date)) {
-      result[key].read_today += item.reads;
-      result[key].view_today += item.views;
-    }
     return result;
   }, {});
 }
