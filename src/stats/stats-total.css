@@ -16,6 +16,16 @@ table th .claps {
     width: 70px;
 }
 
+table .read_today {
+    position: relative;
+    display: inline-block;
+    width: 75px;
+}
+
+table th .read_today {
+    width: 70px;
+}
+
 table .claps .claps-per-fan {
     position: absolute;
     top: 28px;
@@ -152,3 +162,4 @@ tfoot td .syndicated-views {
 .mes-post-bar {
     fill: rgba(3, 159, 118, 0.9) !important;
 }
+
