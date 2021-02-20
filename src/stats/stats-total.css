@@ -66,9 +66,13 @@ table tfoot .today div {
   justify-content: center;
 }
 
-table tfoot .today div {
+table tfoot .today {
   margin-top: -1px !important;
   font-size: 20px !important;
+}
+
+table tfoot .today div {
+  margin-top: -5px !important;
 }
 
 tfoot td {
