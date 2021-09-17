@@ -347,7 +347,7 @@ function updateTableRows(data) {
         const clapsPerViewsRatio =
           post.upvotes === 0 ? 0 : ((post.claps / post.views) * 100).toFixed(1);
         const fansPerReadsRatio =
-          post.upvotes === 0
+          (post.upvotes === 0 || post.reads === 0)
             ? 0
             : ((post.upvotes / post.reads) * 100).toFixed(1);
         claps.innerHTML = `
