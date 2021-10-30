@@ -150,6 +150,8 @@ function handleGetNotifications() {
   ]).then(([status, activity]) => {
     perf.push({ time: timer('notifications'), type: 'request-notifications' });
     const TYPES = {
+      users_email_subscribed: 'email subscribed',
+      users_referred_membership: 'referred membership',
       post_recommended: 'fan',
       post_recommended_rollup: 'fan',
       response_created: 'response',
