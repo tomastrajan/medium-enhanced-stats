@@ -1,10 +1,3 @@
-const loggly = new LogglyTracker();
-loggly.push({
-  logglyKey: 'c5cb1f4e-0af5-459d-8e74-dd390ae4215d',
-  sendConsoleErrors: true,
-  tag: 'mes-popup'
-});
-
 const $body = document.querySelector('body');
 const $table = document.querySelector('table');
 const $year = document.querySelector('.year');

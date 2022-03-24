@@ -1,16 +1,3 @@
-const loggly = new LogglyTracker();
-loggly.push({
-  logglyKey: 'c5cb1f4e-0af5-459d-8e74-dd390ae4215d',
-  sendConsoleErrors: true,
-  tag: 'mes-background',
-});
-
-const perf = new LogglyTracker();
-perf.push({
-  logglyKey: 'c5cb1f4e-0af5-459d-8e74-dd390ae4215d',
-  tag: 'mes-perf',
-});
-
 const API_URL = 'https://medium.com';
 const timers = {};
 
@@ -74,7 +61,7 @@ function handleGetTotals() {
   timer('user');
   return Promise.all([getTotals('/me/stats'), getTotals('/me/stats/responses')])
     .then(([articles, responses]) => {
-      perf.push({ time: timer('user'), type: 'request-user' });
+      console.log(timerToHumanReadableString('user'));
       timer('followers');
       return fetchFollowers(getUser(articles).username).then((followers) => [
         articles,
@@ -83,7 +70,7 @@ function handleGetTotals() {
       ]);
     })
     .then(([articles, responses, followers]) => {
-      perf.push({ time: timer('followers'), type: 'request-followers' });
+      console.log(timerToHumanReadableString('followers'));
       const user = getUser(articles);
       user.id = user.userId;
       user.isMember = user.mediumMemberAt !== 0;
@@ -110,7 +97,7 @@ function handleGetTotals() {
             responses: calculateTotals(),
           };
         });
-        perf.push({ time: timer('collections'), type: 'request-collections' });
+        console.log(timerToHumanReadableString('collections'));
         return { user, collections };
       });
     });
@@ -119,7 +106,7 @@ function handleGetTotals() {
 function handleGetPostStats(postId) {
   timer('post-stats');
   return request(`${API_URL}/stats/${postId}/0/${Date.now()}`).then((data) => {
-    perf.push({ time: timer('post-stats'), type: 'request-post-stats' });
+    console.log(timerToHumanReadableString('post-stats'));
     return calculatePostStats(data);
   });
 }
@@ -134,10 +121,7 @@ function handleGetPostStatsToday(postId) {
   return request(
     `${API_URL}/stats/${postId}/${todayStart.getTime()}/${Date.now()}`
   ).then((data) => {
-    perf.push({
-      time: timer('post-stats-today'),
-      type: 'request-post-stats-today',
-    });
+    console.log(timerToHumanReadableString('post-stats-today'));
     return calculatePostStats(data);
   });
 }
@@ -148,8 +132,9 @@ function handleGetNotifications() {
     request(`${API_URL}/_/activity-status`),
     request(`${API_URL}/me/activity?limit=50`),
   ]).then(([status, activity]) => {
-    perf.push({ time: timer('notifications'), type: 'request-notifications' });
+    console.log(timerToHumanReadableString('notifications'));
     const TYPES = {
+      post_added_to_catalog: 'post added to catalog',
       users_email_subscribed: 'email subscribed',
       users_referred_membership: 'referred membership',
       post_recommended: 'fan',
@@ -277,10 +262,14 @@ function calculatePostStats(data) {
 
 function timer(id) {
   if (!timers[id]) {
-    timers[id] = window.performance.now();
+    timers[id] = self.performance.now();
   } else {
-    const result = window.performance.now() - timers[id];
+    const result = self.performance.now() - timers[id];
     delete timers[id];
     return result;
   }
+}
+
+function timerToHumanReadableString(timerName) {
+  return `${timerName}: ${(timer(timerName) || 0).toFixed(2)}ms`;
 }

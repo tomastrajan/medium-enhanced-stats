@@ -1,9 +1,3 @@
-loggly.push({
-  logglyKey: 'c5cb1f4e-0af5-459d-8e74-dd390ae4215d',
-  sendConsoleErrors: true,
-  tag: 'mes-notifications'
-});
-
 let $notificationHolder;
 let $notificationButton;
 let $notificationExtras;
@@ -77,7 +71,7 @@ function rebindNotificationsButtonEvents() {
 }
 
 function updateNotificationExtraLeftPosition() {
-  $notificationExtras.style.left = `${$notificationButton.offsetLeft - 66}px`;
+  $notificationExtras.style.left = `${$notificationButton.offsetLeft - 96}px`;
 }
 
 function showNotifications() {

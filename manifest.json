@@ -1,22 +1,19 @@
 {
   "name": "Medium Enhanced Stats",
-  "version": "5.6.0",
+  "version": "6.0.0",
   "description": "Your total reach & summary of your articles and responses stats with a single click and many improvements of the Medium stats page!",
-  "manifest_version": 2,
+  "manifest_version": 3,
   "author": "Tomas Trajan <@tomastrajan>",
   "permissions": [
     "storage",
-    "activeTab",
+    "activeTab"
+  ],
+  "host_permissions": [
     "https://medium.com/",
-    "https://cdn-images-1.medium.com/",
-    "https://logs-01.loggly.com/"
+    "https://cdn-images-1.medium.com/"
   ],
   "background": {
-    "scripts": [
-      "src/libs/loggly.js",
-      "src/background.js"
-    ],
-    "persistent": false
+    "service_worker": "src/background.js"
   },
   "content_scripts": [
     {
@@ -30,7 +27,6 @@
         "src/notifications/notifications.css"
       ],
       "js": [
-        "src/libs/loggly.js",
         "src/libs/rxjs.js",
         "src/stats/stats-total.js",
         "src/notifications/notifications.js"
@@ -40,7 +36,7 @@
   "icons": {
     "128": "src/images/icon-128.png"
   },
-  "browser_action": {
+  "action": {
     "default_title": "Medium Enhanced Stats",
     "default_popup": "src/popup/popup.html"
   }

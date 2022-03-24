@@ -3,13 +3,12 @@
     opacity: 0;
     position: absolute;
     top: 70px;
-    left: 17px;
     padding: 10px 20px;
     border-radius: 5px;
     background-color: #272726;
     color: #fff;
     font-size: 14px;
-    width: 120px;
+    width: 180px;
     pointer-events: none;
     z-index: 100;
 }
@@ -27,7 +26,7 @@
     border-color: transparent transparent #272726 transparent;
     position: absolute;
     top: -10px;
-    left: 70px;
+    left: 100px;
 }
 
 .notifications-extras span {
