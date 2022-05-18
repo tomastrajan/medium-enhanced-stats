@@ -1,0 +1,31 @@
+.mes-partner-stats-extras-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mes-partner-stats-extras {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0 0 50px;
+}
+
+.mes-partner-stats-extras .entry {
+  margin: 0 0 0 40px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px;
+}
+
+.mes-partner-stats-extras .entry.total {
+  font-size: 20px;
+  position: relative;
+  top: -3px;
+}
+
+.mes-partner-stats-extras .entry .description {
+  opacity: 0.75;
+  font-weight: normal;
+}

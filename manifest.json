@@ -1,6 +1,6 @@
 {
   "name": "Medium Enhanced Stats",
-  "version": "6.1.0",
+  "version": "7.0.0",
   "description": "Your total reach & summary of your articles and responses stats with a single click and many improvements of the Medium stats page!",
   "manifest_version": 3,
   "author": "Tomas Trajan <@tomastrajan>",
@@ -24,11 +24,13 @@
       "run_at": "document_idle",
       "css": [
         "src/stats/stats-total.css",
+        "src/partner/partner.css",
         "src/notifications/notifications.css"
       ],
       "js": [
         "src/libs/rxjs.js",
         "src/stats/stats-total.js",
+        "src/partner/partner.js",
         "src/notifications/notifications.js"
       ]
     }
