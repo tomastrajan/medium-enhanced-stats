@@ -1,12 +1,11 @@
 {
   "name": "Medium Enhanced Stats",
-  "version": "7.0.0",
+  "version": "7.0.1",
   "description": "Your total reach & summary of your articles and responses stats with a single click and many improvements of the Medium stats page!",
   "manifest_version": 3,
   "author": "Tomas Trajan <@tomastrajan>",
   "permissions": [
-    "storage",
-    "activeTab"
+    "storage"
   ],
   "host_permissions": [
     "https://medium.com/",
