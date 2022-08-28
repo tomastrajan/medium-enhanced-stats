@@ -27,7 +27,10 @@ const $buttonExport = document.querySelector('.export-stats');
 const $downloadLink = document.createElement('a');
 
 const AVATAR_URL = 'https://cdn-images-1.medium.com/fit/c/64/64/';
-const MILESTONES = generateMilestones();
+let MILESTONES = [];
+generateMilestones().then(res => {
+  MILESTONES = res;
+});
 
 let data;
 let accoundData;
@@ -284,45 +287,63 @@ function openStatsPage() {
 }
 
 function generateMilestones() {
-  return [
-    0,
-    1000,
-    5000,
-    10000,
-    25000,
-    50000,
-    75000,
-    100000,
-    250000,
-    500000,
-    750000,
-    1000000,
-    2000000,
-    4000000,
-    6000000,
-    8000000,
-    10000000,
-    20000000,
-    30000000,
-    40000000,
-    50000000,
-    60000000,
-    70000000,
-    80000000,
-    90000000,
-    100000000,
-    200000000,
-    300000000,
-    400000000,
-    500000000,
-    600000000,
-    700000000,
-    800000000,
-    900000000,
-    1000000000,
-    10000000000,
-    100000000000,
-    1000000000000,
-    10000000000000
-  ];
+  return new Promise((resolve, reject) => {
+    try {
+      let defaultMilestones = [
+        0,
+        1000,
+        5000,
+        10000,
+        25000,
+        50000,
+        75000,
+        100000,
+        250000,
+        500000,
+        750000,
+        1000000,
+        2000000,
+        4000000,
+        6000000,
+        8000000,
+        10000000,
+        20000000,
+        30000000,
+        40000000,
+        50000000,
+        60000000,
+        70000000,
+        80000000,
+        90000000,
+        100000000,
+        200000000,
+        300000000,
+        400000000,
+        500000000,
+        600000000,
+        700000000,
+        800000000,
+        900000000,
+        1000000000,
+        10000000000,
+        100000000000,
+        1000000000000,
+        10000000000000
+      ];
+
+      chrome.storage.sync.get({
+        nextMilestone: 0,
+      }, items => {
+        if (items.nextMilestone > 0) {
+          defaultMilestones.push(items.nextMilestone);
+          defaultMilestones.sort(function(a, b) {
+            return a - b;
+          });
+        }
+        resolve(defaultMilestones);
+      });      
+    } catch (ex) {
+      reject(ex);
+    }
+  });
 }
